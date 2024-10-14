@@ -3,7 +3,6 @@
  */
 package bots;
 
-import java.util.ArrayList;
 import arena.BotInfo;
 import arena.Bullet;
 
@@ -48,9 +47,12 @@ public class BotHelper {
 	}
 
 	public Bullet findClosest(BotInfo _me, Bullet[] _bullets) {
+		if(_bullets == null || _bullets.length ==0){
+			return null ;
+		}
 		Bullet closest;
 		double distance, closestDist;
-		// TODO: Fix the error here before the next semester - In the mean time be sure
+		
 		// to error check as this will crash if there are no bullets
 		closest = _bullets[0];
 		closestDist = Math.abs(_me.getX() - closest.getX()) + Math.abs(_me.getY() - closest.getY());
@@ -65,9 +67,11 @@ public class BotHelper {
 	}
 
 	public BotInfo findClosest(BotInfo _me, BotInfo[] _bots) {
+		if(_bots == null || _bots.length ==  0 ){
+			return null ; 
+		}
 		BotInfo closest;
 		double distance, closestDist;
-		// TODO: Fix the error here before the next semester
 		closest = _bots[0];
 		closestDist = Math.abs(_me.getX() - closest.getX()) + Math.abs(_me.getY() - closest.getY());
 		for (int i = 1; i < _bots.length; i++) {
