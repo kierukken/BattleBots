@@ -13,6 +13,7 @@ public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ; 
+    private double dangerBotDistance = 30 ; 
     @Override
     public void newRound() {
         // TODO Auto-generated method stub
@@ -24,7 +25,16 @@ public class BhavyaBot extends Bot {
       
       // Finding the closest Bullets 
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
-      updateBulletTracking(closestBullets);
+      BotInfo threatBot = isBotNearby(me, liveBots);
+      if(threatBot != null){
+        String shootDirection = dangerBotShootDirection(me, threatBot);
+        System.out.println(shootDirection);
+        if(shotOK){
+            
+            return stringToCommand(shootDirection) ; 
+            
+        }
+      }
       String moveDecision = "STAY STILL" ;
       for(Bullet bullet : closestBullets){
         if( bullet != null){
@@ -33,12 +43,16 @@ public class BhavyaBot extends Bot {
                 String direction = getBulletDirection(bullet, prevPosition[0], prevPosition[1]);
                 String reaction = reactToBullet(bullet, direction, me);
                 if(!reaction.equals("STAY STILL")){
-                    moveDecision = reaction ; 
+                    moveDecision = reaction ;
+
                 }
             }
         }
       }
-      return stringToCommand(moveDecision) ; 
+   
+      updateBulletTracking(closestBullets);
+      
+       return stringToCommand(moveDecision) ; 
     }
        
        
@@ -87,7 +101,6 @@ public class BhavyaBot extends Bot {
         picture = images[0] ; 
         throw new UnsupportedOperationException("Unimplemented method 'loadedImages'");
     }
-    // Function to find the positions of two closest bullet to the bot 
     public Bullet[] findTwoClosestBullets(BotInfo me , Bullet[] bullets){
         // Finding the closest Bullet 
         Bullet closest = bothelper.findClosest(me, bullets) ;
@@ -101,9 +114,8 @@ public class BhavyaBot extends Bot {
         // Finding the second closest bullet 
          Bullet secondClosest = bothelper.findClosest(me, remainingBullets.toArray(new Bullet[0]));
          return new Bullet[]{closest , secondClosest} ; 
-    }
-    // Updating bullet positions and tracking directions
-     public void updateBulletTracking(Bullet[] closestBullets){
+    } 
+    public void updateBulletTracking(Bullet[] closestBullets){
         if(closestBullets == null || closestBullets.length == 0 ){
             bulletPreviousPositions.clear() ;
             return;
@@ -115,7 +127,6 @@ public class BhavyaBot extends Bot {
         }
         cleanUpBullets(closestBullets);
      }
-     // Finding the Bullet's Directions 
     public String getBulletDirection(Bullet bullet , double prevX , double prevY){
         double currentX = bullet.getX() ; 
         double currentY = bullet.getY() ; 
@@ -136,15 +147,14 @@ public class BhavyaBot extends Bot {
         else{
             return "STAY" ;
         }
-    }  
-    // Reacting to bullet based on their directions 
+    }   
     public String reactToBullet(Bullet bullet , String direction , BotInfo me){
         double bulletX = bullet.getX() ; 
         double bulletY = bullet.getY() ;
         if((direction.equals("RIGHT") || direction.equals("LEFT"))){
             return (bulletY - me.getY() > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
         } else if ((direction.equals("UP") || direction.equals("DOWN"))){
-            return(bulletX - me.getX() > 0 ) ? "MOVE LEFT " : " MOVE RIGHT" ; 
+            return(bulletX - me.getX() > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
         }
         return "STAY STILL" ; 
     }
@@ -166,20 +176,58 @@ public class BhavyaBot extends Bot {
             }
         }
         }
-        public int stringToCommand(String reaction){
+    public int stringToCommand(String reaction){
              switch (reaction) {
-                 case "MOVE UP":
-                     return BattleBotArena.UP;  
-                 case  "MOVE DOWN" :
-                    return BattleBotArena.DOWN; 
-                 case "MOVE RIGHT" :
-                    return BattleBotArena.RIGHT ;
-                  case "MOVE LEFT" :
-                  return BattleBotArena.LEFT ;    
+                 case "MOVE UP" -> {
+                     return BattleBotArena.UP;
+            }
+                 case  "MOVE DOWN" -> {
+                     return BattleBotArena.DOWN;
+            }
+                 case "MOVE RIGHT" -> {
+                     return BattleBotArena.RIGHT ;    
+            }
+                  case "MOVE LEFT" -> {
+                      return BattleBotArena.LEFT ;
+            }
+                  case  "SHOOT DOWN" ->{
+                    return BattleBotArena.FIREDOWN ;
+                  }
+                  case "SHOOT UP" ->{
+                    return BattleBotArena.FIREUP;
+                  }
+                  case "SHOOT RIGHT" -> {
+                    return BattleBotArena.FIRERIGHT;
+                  }
+                  case "SHOOT LEFT" -> {
+                    return BattleBotArena.FIRELEFT ;
+                  }
              }
              return BattleBotArena.STAY ; 
         }
+    public BotInfo isBotNearby(BotInfo me , BotInfo[] liveBots){
+        for(BotInfo otherBots : liveBots){
+            if(otherBots != null && !otherBots.equals(me)){
+                double distance = bothelper.calcDistance(otherBots.getX(), otherBots.getY(), me.getX(), me.getY()) ;
+                if(distance < dangerBotDistance){
+                    if(Math.abs(otherBots.getX() - me.getX()) < 10 || Math.abs(otherBots.getY() - me.getY()) < 10){
+                        return otherBots ; 
+                    }
+                }
+            }
+        }
+        return null ; 
     }
-
+    public String dangerBotShootDirection(BotInfo me , BotInfo targetBot){
+        if(Math.abs(targetBot.getX() - me.getX()) < 10 ){
+            return (targetBot.getY() > me.getY()) ? "SHOOT DOWN" : "SHOOT UP" ;
+        }
+        else if (Math.abs(targetBot.getY() - me.getY()) < 10){
+            return (targetBot.getX() > me.getX()) ? "SHOOT RIGHT" : "SHOOT LEFT" ;
+        }
+        return "DON'T SHOOT" ; 
+    }   
+}
+   
 
 
