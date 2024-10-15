@@ -9,15 +9,21 @@ import java.util.Arrays;
 import java.util.HashMap ;
 import java.util.List  ;
 import java.util.Map ;
+
+import javax.print.DocFlavor.STRING;
 public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ; 
-    private double dangerBotDistance = 30 ; 
+    private double dangerBotDistance = 300 ; 
+    private double edgeDistanceX = 100 ; 
+    private double edgeDistanceY = 50 ;  
+    private int edgeEscape = 5 ; 
+    private int edgeEscapeStep = 0 ; 
+    private boolean escapeEdge = false ; 
     @Override
     public void newRound() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'newRound'");
+        
     }
 
     @Override
@@ -25,10 +31,39 @@ public class BhavyaBot extends Bot {
       
       // Finding the closest Bullets 
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
+      String isEdge = isAtEdges(me) ; 
+      if(!isEdge.equals("ALL GOOD")){
+          escapeEdge = true ; 
+      }
+      if(escapeEdge){
+           if(edgeEscapeStep ==edgeEscape){
+            escapeEdge = false ; 
+           }
+        switch (isEdge) {
+            case "MOVE UP" -> {
+                edgeEscapeStep++ ;
+                return(stringToCommand(isEdge));
+       }
+            case  "MOVE DOWN" -> {
+                edgeEscapeStep++ ;
+                return(stringToCommand(isEdge));
+            }
+            case "MOVE RIGHT" -> {
+                edgeEscapeStep++ ;
+                return(stringToCommand(isEdge)) ;    
+       }
+             case "MOVE LEFT" -> {
+                edgeEscapeStep++ ;
+                 return (stringToCommand(isEdge)) ;
+       }
+
+          }
+
+      }
       BotInfo threatBot = isBotNearby(me, liveBots);
       if(threatBot != null){
         String shootDirection = dangerBotShootDirection(me, threatBot);
-        System.out.println(shootDirection);
+        
         if(shotOK){
             
             return stringToCommand(shootDirection) ; 
@@ -51,55 +86,51 @@ public class BhavyaBot extends Bot {
       }
    
       updateBulletTracking(closestBullets);
-      
+      System.out.println(moveDecision);
        return stringToCommand(moveDecision) ; 
     }
-       
-       
-        //throw new UnsupportedOperationException("Unimplemented method 'getMove'");
-    
 
     @Override
     public void draw(Graphics g, int x, int y) {
         g.drawImage(picture , x, y , 25 , 25 , null);
-        //throw new UnsupportedOperationException("Unimplemented method 'draw'");
+       
     }
 
     @Override
     public String getName() {
         return "Monte" ; 
-        //throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    
     }
 
     @Override
     public String getTeamName() {
         return "Ka'ah";
-        //throw new UnsupportedOperationException("Unimplemented method 'getTeamName'");
+      
     }
 
     @Override
     public String outgoingMessage() {
         return "Die bot Die" ; 
-        //throw new UnsupportedOperationException("Unimplemented method 'outgoingMessage'");
+     
     }
 
     @Override
     public void incomingMessage(int botNum, String msg) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'incomingMessage'");
+       
+        
     }
 
     @Override
     public String[] imageNames() {
         String [] images = {"mango2.png" , "starfish4.png" , "SamBot.png","drone_down.png"};
         return images ; 
-        //throw new UnsupportedOperationException("Unimplemented method 'imageNames'");
+
     }
 
     @Override
     public void loadedImages(Image[] images) {
         picture = images[0] ; 
-        throw new UnsupportedOperationException("Unimplemented method 'loadedImages'");
+        
     }
     public Bullet[] findTwoClosestBullets(BotInfo me , Bullet[] bullets){
         // Finding the closest Bullet 
@@ -210,7 +241,7 @@ public class BhavyaBot extends Bot {
             if(otherBots != null && !otherBots.equals(me)){
                 double distance = bothelper.calcDistance(otherBots.getX(), otherBots.getY(), me.getX(), me.getY()) ;
                 if(distance < dangerBotDistance){
-                    if(Math.abs(otherBots.getX() - me.getX()) < 10 || Math.abs(otherBots.getY() - me.getY()) < 10){
+                    if(Math.abs(otherBots.getX() - me.getX()) < 10 || Math.abs(otherBots.getY() - me.getY()) < 20){
                         return otherBots ; 
                     }
                 }
@@ -226,7 +257,27 @@ public class BhavyaBot extends Bot {
             return (targetBot.getX() > me.getX()) ? "SHOOT RIGHT" : "SHOOT LEFT" ;
         }
         return "DON'T SHOOT" ; 
-    }   
+    }  
+    public String isAtEdges(BotInfo me){
+       double currentBotX = me.getX() ; 
+       double currentBotY = me.getY() ;
+       if(currentBotX > 1300 - edgeDistanceX){
+        return "MOVE LEFT" ; 
+       }
+       else if(currentBotX < edgeDistanceX){
+        return "MOVE RIGHT" ; 
+       }
+       else if (currentBotY > 700 - edgeDistanceY){
+        return "MOVE UP" ; 
+       }
+       else if(currentBotY < edgeDistanceY){
+        return "MOVE DOWN" ;
+       }
+       else{
+        return "ALL GOOD" ; 
+       }
+    }
+    
 }
    
 
