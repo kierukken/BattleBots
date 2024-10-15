@@ -186,7 +186,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	/**
 	 * Set to TRUE for debugging output
 	 */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	//***********************************************
 	// MAIN SET OF CONSTANTS AVAILABLE TO THE BOTS...
@@ -624,7 +624,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// bots[4] = new SaremBot();
 		// bots[5] = new JohnathanBot();
 		// bots[6] = new RebeccaBot();
-		// bots[7] = new FarrisBot();
+		 bots[7] = new FarrisBot();
 		// bots[8] = new BhavyaBot();
 		// bots[9] = new MatthewBot();
 		// bots[10] = new RickBot();
