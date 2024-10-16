@@ -12,7 +12,8 @@ import java.util.Map ;
 public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
-    private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ; 
+    private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ;
+    private Map<Integer , double[]> botPreviousPositions = new HashMap<>() ; 
     private final  double dangerBotDistance = 300 ; 
     private final  double edgeDistanceX = 100 ; 
     private final double edgeDistanceY = 50 ;  
@@ -22,6 +23,8 @@ public class BhavyaBot extends Bot {
     private String Edge = "" ; 
     private final int maxBullet = 2 ; 
     private int currentBullet =  0 ; 
+    private String lastMove = "" ; 
+    private int timeStamp = 0 ; 
     @Override
     public void newRound() {
         
@@ -31,8 +34,14 @@ public class BhavyaBot extends Bot {
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
       
       // Finding the closest Bullets 
+     
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
-      if(me.getX() < edgeDistanceX){
+      double botCurrentX = me.getX() ;
+      double botCurrentY = me.getY() ; 
+      double[] botPositions = {botCurrentX , botCurrentY} ;
+      timeStamp++ ; 
+      updateBotPosition(botPositions, timeStamp);
+      /*if(me.getX() < edgeDistanceX){
           Edge = "MOVE RIGHT" ; 
          escapeEdge = true ; 
       }else if (me.getX() > 1300 - edgeDistanceX){
@@ -52,19 +61,18 @@ public class BhavyaBot extends Bot {
                 edgeEscapeStep++ ; 
             }
             return stringToCommand(Edge) ;
-      }
+      }*/
 
       
-      BotInfo threatBot = isBotNearby(me, liveBots);
+          BotInfo threatBot = isBotNearby(me, liveBots);
       if(threatBot != null){
         String shootDirection = dangerBotShootDirection(me, threatBot);
         
-        if(shotOK && (currentBullet < maxBullet)){
-            currentBullet++ ;
+        if(shotOK){
             return stringToCommand(shootDirection) ; 
             
         }
-      }
+      } 
       String moveDecision = "STAY STILL" ;
       for(Bullet bullet : closestBullets){
         if( bullet != null){
@@ -79,10 +87,10 @@ public class BhavyaBot extends Bot {
             }
         }
       }
-   
+      
       updateBulletTracking(closestBullets);
-      System.out.println(moveDecision);
-       return stringToCommand(moveDecision) ; 
+      System.out.println("MOVE DECISION IS : " + moveDecision);
+       return stringToCommand(moveDecision);
     }
 
     @Override
@@ -212,15 +220,19 @@ public class BhavyaBot extends Bot {
     public int stringToCommand(String reaction){
              switch (reaction) {
                  case "MOVE UP" -> {
+                    System.out.println("GOING UP");
                      return BattleBotArena.UP;
             }
                  case  "MOVE DOWN" -> {
+                    System.out.println("GOING DOWN");
                      return BattleBotArena.DOWN;
             }
                  case "MOVE RIGHT" -> {
+                    System.out.println("GOING RIGHT");
                      return BattleBotArena.RIGHT ;    
             }
                   case "MOVE LEFT" -> {
+                    System.out.println("GOING LEFT");
                       return BattleBotArena.LEFT ;
             }
                   case  "SHOOT DOWN" ->{
@@ -279,7 +291,12 @@ public class BhavyaBot extends Bot {
         return "ALL GOOD" ; 
        }
     }
-    
+    public void updateBotPosition(double[] botPrevPosition , int timeStamp){
+       botPreviousPositions.put(timeStamp , botPrevPosition) ;
+    }
+    //public boolean isMoving(String lastMove , BotInfo me){
+     
+   // }
 }
    
 
