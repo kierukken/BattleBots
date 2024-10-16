@@ -13,6 +13,7 @@ public class MatthewKBot extends Bot {
     private int[] options;
 
     private int move;
+    
     private int lastMove;
     /*
      * If true and there's ammo, the bot will automatically dump all its ammo
@@ -64,7 +65,7 @@ public class MatthewKBot extends Bot {
             double yDistFromBot = Math.abs(deltaYfromBot);
             if((xDistFromBot>20 && xDistFromBot<30)||(yDistFromBot>20&&yDistFromBot<30)){    
                 /*if(true){
-                
+
                 }else{
                     /**
                      * Line up with bot to fire at it.
@@ -90,75 +91,78 @@ public class MatthewKBot extends Bot {
                     //only 3 and 4 (up and down) remain
                     options = removeOptions(1,2,5,6,7,8,9);
                     printArr(options);
-                    if(deltaXfromBot < 0){//                            go left                               go right
-                        options = (deltaXfromBot < -25)?removeOptions(4):removeOptions(3);
-                    }else{//                                            go left                               go right
-                        options = (deltaXfromBot < 25)?removeOptions(4):removeOptions(3);
-                    }
-                    
+                    //double ternary opperator
+                    options = (deltaXfromBot < 0)
+                        ?(deltaXfromBot < -25)?removeOptions(4):removeOptions(3)
+                        :(deltaXfromBot < 25)?removeOptions(4):removeOptions(3);
                 }else{
                     //change y position and get rid of x options left and right
                     //only 1 and 2 (up and down) remain
                     options = removeOptions(3,4,5,6,7,8,9);
                     printArr(options);
+                    //double ternary opperator
                     //above if dy > 0
-                    if(deltaYfromBot > 0){//                            go up                               go down
-                        options = (deltaYfromBot < 25)?removeOptions(2):removeOptions(1);
-                    }else{//                                            go up                              go down
-                        options = (deltaXfromBot < -25)?removeOptions(2):removeOptions(1);
-                    }
+                    options = (deltaYfromBot > 0)
+                        ?((deltaYfromBot < 25)?removeOptions(2):removeOptions(1))
+                        :((deltaXfromBot < -25)?removeOptions(2):removeOptions(1));
+                    
                 }
                 move = options[(int)(System.currentTimeMillis() % options.length)];
                 lastMove = move;
                 return(move);
-            }
-
-            
+            }            
         } else {
             //play defensively
             System.out.println("DEFENSE");
         }
 
         // TODO Auto-generated method stub 
+        move = 
         lastMove = move;
-
         return(move);
     }
+
+
+
+
+
+
+
     private int[] removeOptions(int... optionsToRemove) {
-    // Create a list to hold the new options
-    ArrayList<Integer> newArr = new ArrayList<>();
-
-    // Iterate through the current options
-    for (int opt : options) {
-        // Check if the current option is in the optionsToRemove array
-        boolean toRemove = false;
-        for (int removeOpt : optionsToRemove) {
-            if (opt == removeOpt) {
-                toRemove = true;
-                break;
+        if(options.length - optionsToRemove.length > 1){
+            // Create a list to hold the new options
+            ArrayList<Integer> newArr = new ArrayList<>();
+            // Iterate through the current options
+            for (int opt : options) {
+                // Check if the current option is in the optionsToRemove array
+                boolean toRemove = false;
+                for (int removeOpt : optionsToRemove) {
+                    if (opt == removeOpt) {
+                        toRemove = true;
+                        break;
+                    }
+                }
+                // If the current option is not to be removed, add it to the new array
+                if (!toRemove) {
+                    newArr.add(opt);
+                }
             }
-        }
-        // If the current option is not to be removed, add it to the new array
-        if (!toRemove) {
-            newArr.add(opt);
-        }
+            // Convert ArrayList back to int array
+            int[] retArr = new int[newArr.size()];
+            for (int i = 0; i < retArr.length; i++) {
+                retArr[i] = newArr.get(i);
+            }
+        return retArr;
+        }else{
+        return options;
     }
-
-    // Convert ArrayList back to int array
-    int[] retArr = new int[newArr.size()];
-    for (int i = 0; i < retArr.length; i++) {
-        retArr[i] = newArr.get(i);
-    }
-
-    return retArr;
-}
-
-private void printArr(int[] arr){
+    }   
+    private void printArr(int[] arr){
     for(int i=0;i<arr.length;i++){
         System.out.print(arr[i] + " ");
     }
     System.out.println();
-}
+    }
 
 
     @Override
