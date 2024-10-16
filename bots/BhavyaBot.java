@@ -13,18 +13,11 @@ public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ;
-    double [] botPreviousPositions = null ; 
+    double [] botPreviousPositions = new double[2] ; 
+    double[] botPositions = new double[2] ; 
     private final  double dangerBotDistance = 300 ; 
-    private final  double edgeDistanceX = 100 ; 
-    private final double edgeDistanceY = 50 ;  
-    private  final int edgeEscape = 5 ; 
-    private  int edgeEscapeStep = 0 ; 
-    private boolean escapeEdge = false ; 
-    private String Edge = "" ; 
-    private final int maxBullet = 2 ; 
-    private int currentBullet =  0 ; 
-    private String lastMove = "" ; 
     private int timeStamp = 0 ; 
+    private int bulletsShot = 0 ; 
     @Override
     public void newRound() {
         
@@ -32,19 +25,40 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-      System.out.println("TimeStamp " + timeStamp);
+     
       // Finding the closest Bullets 
      
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
-      System.out.println("Closest Bullets Found");
       
-      /*double botCurrentX = me.getX() ;
+      
+      double botCurrentX = me.getX() ;
       double botCurrentY = me.getY() ; 
-      double[] botPositions = {botCurrentX , botCurrentY} ;
+    
+      botPositions[0] = botCurrentX ; 
+      botPositions[1] = botCurrentY ; 
       timeStamp++ ; 
-      updateBotPosition(botPositions, timeStamp);*/
+      if(botPositions != null){
+      updateBotPosition(botPositions, timeStamp);
+      }
+      boolean checkStuck = true ; 
+       if(checkStuck){
+        System.out.println("Checking for stuck");
+        if(botPositions != null && botPreviousPositions!= null){
+            System.out.println("CALLING CHECK STUCk");
+          if(checkStuck(botPreviousPositions, botPositions)){
+            System.out.println("BOT GOT STUCK ");
+          }
+          else{
+            System.out.println("BOT NOT STUCK ");
+          }
+        }
+        else{
+            System.out.println("SOMETHING STILL NULL");
+        }
+       }
+      System.out.println("MADE IT OUT");
    
-       System.out.println("Made it out");
+      
       /*if(me.getX() < edgeDistanceX){
           Edge = "MOVE RIGHT" ; 
          escapeEdge = true ; 
@@ -67,18 +81,15 @@ public class BhavyaBot extends Bot {
             return stringToCommand(Edge) ;
       }*/
 
-     
+      if(shotOK && bulletsShot < 3){
         BotInfo threatBot = isBotNearby(me, liveBots);
         if(threatBot != null){
-            System.out.println("BOT FOUND AT " + timeStamp + "Seconds") ;
-        String shootDirection = dangerBotShootDirection(me, threatBot);
-        
-        if(shotOK){
-            return stringToCommand(shootDirection) ; 
             
-        }
+        String shootDirection = dangerBotShootDirection(me, threatBot);
+             bulletsShot++ ;
+            return stringToCommand(shootDirection) ; 
       } 
-    
+      }
       String moveDecision = "STAY STILL" ;
       for(Bullet bullet : closestBullets){
         if( bullet != null){
@@ -87,6 +98,7 @@ public class BhavyaBot extends Bot {
                 String direction = getBulletDirection(bullet, prevPosition[0], prevPosition[1]);
                 String reaction = reactToBullet(bullet, direction, me);
                 if(!reaction.equals("STAY STILL")){
+                    bulletsShot = 0 ; 
                     moveDecision = reaction ;
 
                 }
@@ -95,7 +107,7 @@ public class BhavyaBot extends Bot {
       }
       
       updateBulletTracking(closestBullets);
-      System.out.println("MOVE DECISION IS : " + moveDecision);
+        System.out.println(moveDecision);
        return stringToCommand(moveDecision);
     }
 
@@ -226,19 +238,19 @@ public class BhavyaBot extends Bot {
     public int stringToCommand(String reaction){
              switch (reaction) {
                  case "MOVE UP" -> {
-                    System.out.println("GOING UP");
+                  
                      return BattleBotArena.UP;
             }
                  case  "MOVE DOWN" -> {
-                    System.out.println("GOING DOWN");
+                  
                      return BattleBotArena.DOWN;
             }
                  case "MOVE RIGHT" -> {
-                    System.out.println("GOING RIGHT");
+                    
                      return BattleBotArena.RIGHT ;    
             }
                   case "MOVE LEFT" -> {
-                    System.out.println("GOING LEFT");
+                  
                       return BattleBotArena.LEFT ;
             }
                   case  "SHOOT DOWN" ->{
@@ -278,28 +290,20 @@ public class BhavyaBot extends Bot {
         }
         return "DON'T SHOOT" ; 
     }  
-    public String isAtEdges(BotInfo me){
-       double currentBotX = me.getX() ; 
-       double currentBotY = me.getY() ;
-       if(currentBotX > 1300 - edgeDistanceX){
-        return "MOVE LEFT" ; 
-       }
-       else if(currentBotX < edgeDistanceX){
-        return "MOVE RIGHT" ; 
-       }
-       else if (currentBotY > 700 - edgeDistanceY){
-        return "MOVE UP" ; 
-       }
-       else if(currentBotY < edgeDistanceY){
-        return "MOVE DOWN" ;
-       }
-       else{
-        return "ALL GOOD" ; 
-       }
-    }
     public void updateBotPosition(double[] botPositions , int timeStamp){
        botPreviousPositions[0] = botPositions[0] ;
        botPreviousPositions[1] = botPositions[1] ; 
+    }
+    public boolean checkStuck(double[] botPreviousPositions , double[] botPositions){
+         if(Math.abs(botPreviousPositions[0] - botPositions[0]) < 6  ){
+            return true ; 
+         }
+         else if(Math.abs(botPreviousPositions[1] - botPositions[1])<6){
+            return true ; 
+         }
+         else{
+            return false ; 
+         }
     }
 }
    
