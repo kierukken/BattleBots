@@ -13,7 +13,7 @@ public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ;
-    private Map<Integer , double[]> botPreviousPositions = new HashMap<>() ; 
+    double [] botPreviousPositions = null ; 
     private final  double dangerBotDistance = 300 ; 
     private final  double edgeDistanceX = 100 ; 
     private final double edgeDistanceY = 50 ;  
@@ -32,15 +32,19 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-      
+      System.out.println("TimeStamp " + timeStamp);
       // Finding the closest Bullets 
      
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
-      double botCurrentX = me.getX() ;
+      System.out.println("Closest Bullets Found");
+      
+      /*double botCurrentX = me.getX() ;
       double botCurrentY = me.getY() ; 
       double[] botPositions = {botCurrentX , botCurrentY} ;
       timeStamp++ ; 
-      updateBotPosition(botPositions, timeStamp);
+      updateBotPosition(botPositions, timeStamp);*/
+   
+       System.out.println("Made it out");
       /*if(me.getX() < edgeDistanceX){
           Edge = "MOVE RIGHT" ; 
          escapeEdge = true ; 
@@ -63,9 +67,10 @@ public class BhavyaBot extends Bot {
             return stringToCommand(Edge) ;
       }*/
 
-      
-          BotInfo threatBot = isBotNearby(me, liveBots);
-      if(threatBot != null){
+     
+        BotInfo threatBot = isBotNearby(me, liveBots);
+        if(threatBot != null){
+            System.out.println("BOT FOUND AT " + timeStamp + "Seconds") ;
         String shootDirection = dangerBotShootDirection(me, threatBot);
         
         if(shotOK){
@@ -73,6 +78,7 @@ public class BhavyaBot extends Bot {
             
         }
       } 
+    
       String moveDecision = "STAY STILL" ;
       for(Bullet bullet : closestBullets){
         if( bullet != null){
@@ -291,12 +297,10 @@ public class BhavyaBot extends Bot {
         return "ALL GOOD" ; 
        }
     }
-    public void updateBotPosition(double[] botPrevPosition , int timeStamp){
-       botPreviousPositions.put(timeStamp , botPrevPosition) ;
+    public void updateBotPosition(double[] botPositions , int timeStamp){
+       botPreviousPositions[0] = botPositions[0] ;
+       botPreviousPositions[1] = botPositions[1] ; 
     }
-    //public boolean isMoving(String lastMove , BotInfo me){
-     
-   // }
 }
    
 
