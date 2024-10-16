@@ -620,7 +620,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// ******************************
 		// bots[1] = new AhmedBot();
 		// bots[2] = new RyanBot();
-		// bots[3] = new IsmailBot();
+		bots[3] = new IsmailBot();
 		// bots[4] = new SaremBot();
 		// bots[5] = new JohnathanBot();
 		// bots[6] = new RebeccaBot();
