@@ -9,18 +9,19 @@ import java.util.Arrays;
 import java.util.HashMap ;
 import java.util.List  ;
 import java.util.Map ;
-
-import javax.print.DocFlavor.STRING;
 public class BhavyaBot extends Bot {
     Image picture ; 
     BotHelper bothelper = new BotHelper() ; 
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ; 
-    private double dangerBotDistance = 300 ; 
-    private double edgeDistanceX = 100 ; 
-    private double edgeDistanceY = 50 ;  
-    private int edgeEscape = 5 ; 
-    private int edgeEscapeStep = 0 ; 
+    private final  double dangerBotDistance = 300 ; 
+    private final  double edgeDistanceX = 100 ; 
+    private final double edgeDistanceY = 50 ;  
+    private  final int edgeEscape = 5 ; 
+    private  int edgeEscapeStep = 0 ; 
     private boolean escapeEdge = false ; 
+    private String Edge = "" ; 
+    private final int maxBullet = 2 ; 
+    private int currentBullet =  0 ; 
     @Override
     public void newRound() {
         
@@ -31,41 +32,35 @@ public class BhavyaBot extends Bot {
       
       // Finding the closest Bullets 
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets);
-      String isEdge = isAtEdges(me) ; 
-      if(!isEdge.equals("ALL GOOD")){
-          escapeEdge = true ; 
+      if(me.getX() < edgeDistanceX){
+          Edge = "MOVE RIGHT" ; 
+         escapeEdge = true ; 
+      }else if (me.getX() > 1300 - edgeDistanceX){
+        Edge = "MOVE LEFT" ;
+        escapeEdge = true ; 
+      }else if (me.getY() < edgeDistanceY){
+        Edge = "MOVE DOWN" ;
+        escapeEdge = true ; 
+      }else if (me.getY() > 700 - edgeDistanceY){
+        Edge = "MOVE UP" ; 
+        escapeEdge = true ; 
       }
       if(escapeEdge){
-           if(edgeEscapeStep ==edgeEscape){
-            escapeEdge = false ; 
-           }
-        switch (isEdge) {
-            case "MOVE UP" -> {
-                edgeEscapeStep++ ;
-                return(stringToCommand(isEdge));
-       }
-            case  "MOVE DOWN" -> {
-                edgeEscapeStep++ ;
-                return(stringToCommand(isEdge));
+            if(edgeEscapeStep == edgeEscape){
+                escapeEdge = false ; 
+            }else{
+                edgeEscapeStep++ ; 
             }
-            case "MOVE RIGHT" -> {
-                edgeEscapeStep++ ;
-                return(stringToCommand(isEdge)) ;    
-       }
-             case "MOVE LEFT" -> {
-                edgeEscapeStep++ ;
-                 return (stringToCommand(isEdge)) ;
-       }
-
-          }
-
+            return stringToCommand(Edge) ;
       }
+
+      
       BotInfo threatBot = isBotNearby(me, liveBots);
       if(threatBot != null){
         String shootDirection = dangerBotShootDirection(me, threatBot);
         
-        if(shotOK){
-            
+        if(shotOK && (currentBullet < maxBullet)){
+            currentBullet++ ;
             return stringToCommand(shootDirection) ; 
             
         }
@@ -184,8 +179,15 @@ public class BhavyaBot extends Bot {
         double bulletY = bullet.getY() ;
         if((direction.equals("RIGHT") || direction.equals("LEFT"))){
             return (bulletY - me.getY() > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
-        } else if ((direction.equals("UP") || direction.equals("DOWN"))){
+        }
+        else if((direction.equals("RIGHT") || direction.equals("LEFT")) && bulletY - me.getY() == 0 ){
+                return (me.getY() - 350 > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
+        }
+         else if ((direction.equals("UP") || direction.equals("DOWN"))){
             return(bulletX - me.getX() > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
+        }
+        else if ((direction.equals("UP") || direction.equals("DOWN")) && bulletX - me.getX() == 0 ){
+            return (me.getX() - 650 > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
         }
         return "STAY STILL" ; 
     }
