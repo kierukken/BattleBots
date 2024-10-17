@@ -48,7 +48,7 @@ public class BotHelper {
 		return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 	}
 
-	public Bullet findClosestBullet(BotInfo _me, Bullet[] _bullets) {
+	public Bullet findClosest(BotInfo _me, Bullet[] _bullets) {
 		Bullet closest;
 		double distance, closestDist;
 		// TODO: Fix the error here before the next semester - In the mean time be sure
@@ -65,7 +65,7 @@ public class BotHelper {
 		return closest;
 	}
 
-	public BotInfo findClosestBot(BotInfo _me, BotInfo[] _bots) {
+	public BotInfo findClosest(BotInfo _me, BotInfo[] _bots) {
 		BotInfo closest;
 		double distance, closestDist;
 		// TODO: Fix the error here before the next semester

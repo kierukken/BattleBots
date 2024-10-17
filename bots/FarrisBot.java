@@ -83,7 +83,7 @@ public class FarrisBot extends Bot {
 		}
 
 		// Find closest bullet
-		Bullet closestBullet = helper.findClosestBullet(me, bullets);
+		Bullet closestBullet = helper.findClosest(me, bullets);
 
 		// Bullet dodging
 		if (closestBullet != null) {
@@ -115,7 +115,7 @@ public class FarrisBot extends Bot {
 		}
 
 		// Shooting logic
-		BotInfo nearestBot = helper.findClosestBot(me, liveBots);
+		BotInfo nearestBot = helper.findClosest(me, liveBots);
 		if (nearestBot != null && shotOK) {
 			double nearBotX = nearestBot.getX();
 			double nearBotY = nearestBot.getY();
