@@ -186,8 +186,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	/**
 	 * Set to TRUE for debugging output
 	 */
-	public static final boolean DEBUG = false ;
-	 ;
+	public static final boolean DEBUG = false;
 
 	//***********************************************
 	// MAIN SET OF CONSTANTS AVAILABLE TO THE BOTS...
@@ -309,7 +308,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	 * Total number of Bots in round 1 (if you have fewer than this, the rest of the spots
 	 * in the array will be filled with Drones, RandBots, and Sentries).
 	 */
-	public static final int 	NUM_BOTS =30;//BROOKS NOV 12 2017 Changed to 16
+	public static final int 	NUM_BOTS = 30;//BROOKS NOV 12 2017 Changed to 16
 	/**
 	 * Number of bullets on screen at once for each bot
 	 */
@@ -616,18 +615,18 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// *** HUMAN TEST BOT CREATION
 		// *** Comment the next two lines out if you don't want to use the
 		// *** HumanBot (under user control)
-		//bots[0] = new HumanBot();
-		//addKeyListener((HumanBot)bots[0]);
+		bots[0] = new HumanBot();
+		addKeyListener((HumanBot)bots[0]);
 		// ******************************
 		// bots[1] = new AhmedBot();
 		// bots[2] = new RyanBot();
-		// bots[3] = new IsmailBot();
+		bots[3] = new IsmailBot();
 		// bots[4] = new SaremBot();
 		// bots[5] = new JohnathanBot();
 		// bots[6] = new RebeccaBot();
 		// bots[7] = new FarrisBot();
-		bots[1] = new BhavyaBot();
-		// bots[9] = new MatthewBot();
+		// bots[8] = new BhavyaBot();
+		// bots[9] = new MatthewKBot();
 		// bots[10] = new RickBot();
 		// bots[11] = new AravBot();
 		// bots[12] = new DylanBot();
