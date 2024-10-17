@@ -8,8 +8,10 @@ import arena.BotInfo;
 import arena.Bullet;
 
 public class IsmailBot extends Bot{
+    private int move = BattleBotArena.STAY;
     Image up, down, left, right, current; 
-
+    BotHelper helper = new BotHelper();
+    public Bullet closestBullet;
     @Override
     public void newRound() {
         
@@ -17,16 +19,74 @@ public class IsmailBot extends Bot{
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {     
-        for (int i = 0;i<bullets.length;i++) {
-            if (Math.abs(bullets[i].getX()-me.getX()) <= 100 ) {
-                
+        if(bullets.length > 0){
+            closestBullet = helper.findClosest(me, bullets);
+        }
+        BotInfo closestBot = helper.findClosest(me, liveBots);
+        double distfromBotX = closestBot.getX() - me.getX();
+        double distfromBotY = closestBot.getY() - me.getY();
+        double dispfromBulletX = helper.calcDisplacement( me.getY(), closestBullet.getY());
+        double dispfromBulletY = helper.calcDisplacement( me.getX(), closestBullet.getX());
+        
+        
+        /*
+         * My strategy for the first round involves my bot responding to bullets by either moving up,down,left or right depending on which axis
+         * the bullet is coming from and whether there is a bot already above my bot.
+         * My bot will also shoot up,down,left or right depending on if there is a bot that is in shooting range.
+         **/
+        if ((Math.abs(dispfromBulletX) <= 26)&&(dispfromBulletX>0)&&(closestBullet.getY() >= me.getY())&&(closestBullet.getY() <= me.getY()+26)) {
+            if (distfromBotY < 0) { 
+                move = BattleBotArena.DOWN;
+            }
+            else if (distfromBotY > 0) { 
+                move = BattleBotArena.UP;
+            }
+        
+        }
+        if ((Math.abs(dispfromBulletX) <= 26)&&(dispfromBulletX>0)&&(closestBullet.getY() >= me.getY())&&(closestBullet.getY() <= me.getY()+26)) {
+            if (distfromBotY < 0) { 
+                move = BattleBotArena.DOWN;
+            }
+            else if (distfromBotY > 0) { 
+                move = BattleBotArena.UP;
+            }
+        
+        }
+        if ((Math.abs(dispfromBulletY) <= 26)&&(dispfromBulletY<0)&&(me.getX() <= closestBullet.getX())&&(me.getX()+26 >= closestBullet.getX())) {
+            if (distfromBotX < 0) { 
+                move = BattleBotArena.LEFT;
+            }
+            else if (distfromBotX > 0) { 
+                move = BattleBotArena.RIGHT;
             }
         }
-        for (int i = 0;i<bullets.length;i++) {
-            
+        if ((Math.abs(dispfromBulletY) <= 26)&&(dispfromBulletY>0)&&(me.getX() <= closestBullet.getX())&&(me.getX()+26 >= closestBullet.getX())) {
+            if (distfromBotX < 0) { 
+                move = BattleBotArena.LEFT;
+            }
+            else if (distfromBotX > 0) { 
+                move = BattleBotArena.RIGHT;
+            }
         }
-        return BattleBotArena.STAY;
-        // throw new UnsupportedOperationException("Unimplemented method 'getMove'");
+        if ((distfromBotX <= 26)&&(distfromBotX>=0)) {
+            if (distfromBotY>0) {
+                move = BattleBotArena.FIREDOWN;
+            }
+            else {
+                move = BattleBotArena.FIREUP;
+            }
+        }
+        if ((Math.abs(distfromBotY) <= 26)&&(distfromBotY>=0)) {
+            if (distfromBotX>0) {
+                move = BattleBotArena.FIRERIGHT;
+            }
+            else {
+                move = BattleBotArena.FIRELEFT;
+            }
+        }
+
+        return move;
+        
     }
 
     @Override
