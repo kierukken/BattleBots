@@ -15,6 +15,13 @@ import bots.Bot;
  *
  * @author sam.scott
  * @version 1.0 (March 3, 2011)
+ * 		
+ * Added limited ammo functionality		
+ * botInfo now contains bulletsLeft which relates ammo level. 		
+ * Corresponds to changes made to BattleBotArena to allow ammo pick up off dead bots 		
+ * and not being able to fire if out of ammo		
+ * @author rowbottomn		
+ * @version 2.0 (Nov 15 2015) 
  */
 public class BotInfo {
 
@@ -91,6 +98,11 @@ public class BotInfo {
 	 */
 	private DecimalFormat df = new DecimalFormat("0.0");
 
+	/**		
+	 * Ammo remaining - when 0 remaining bot cannot fire.		
+	 */			
+	private int bulletsLeft = BattleBotArena.BULLETS_LEFT;
+	
 	/**
 	 * Constructor
 	 * @param x Starting x location
@@ -130,6 +142,7 @@ public class BotInfo {
 		b.killedBy = killedBy;
 		b.numKills = numKills;
 		b.overheated = overheated;
+		b.bulletsLeft = bulletsLeft; 
 		return b;
 	}
 
@@ -140,7 +153,7 @@ public class BotInfo {
 	{
 		return "Name: "+name+". Team: "+team+". Score: "+df.format(score)+
 		". At: ("+df.format(x)+","+df.format(y)+"). Dead: "+dead+"("+timeOfDeath+")"+" <"+
-		thinkTime+","+numExceptions+","+numMessages+","+lastMove+">";
+		thinkTime+","+numExceptions+","+numMessages+","+lastMove+","+bulletsLeft+">";
 	}
 
 	/**
@@ -386,4 +399,20 @@ public class BotInfo {
 	public int getNumKills() {
 		return numKills;
 	}
+	
+	/**
+	* @return Number of bullets remaining in this bot
+	*/
+	public int getBulletsLeft() {		
+		return bulletsLeft;		
+	}		
+		
+	/**		
+	 * @param bulletsLeft the bulletsLeft to set		
+	 */	
+	
+	protected void setBulletsLeft(int bulletsLeft) {		
+		this.bulletsLeft = bulletsLeft;		
+	}
+	
 }

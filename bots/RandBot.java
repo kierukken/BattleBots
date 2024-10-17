@@ -192,7 +192,7 @@ public class RandBot extends Bot {
 	 */
 	public String getTeamName()
 	{
-		return "Arena";
+		return "Rand";
 	}
 
 	/**

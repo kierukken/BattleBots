@@ -60,6 +60,11 @@ public class Drone extends Bot {
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots,
 			BotInfo[] deadBots, Bullet[] bullets) {
 
+		//return BattleBotArena.STAY;
+		
+		if (me.getBulletsLeft()<0){
+			System.out.println("What the?!?!");
+		}
 		// decrease the counter to decide whether it is time to move
 		counter--;
 		// occasional messages
@@ -104,6 +109,7 @@ public class Drone extends Bot {
 			current = right;
 		return move;
 	}
+	
 
 	/**
 	 * Construct and return my name
@@ -119,7 +125,7 @@ public class Drone extends Bot {
 	 * Team Arena!
 	 */
 	public String getTeamName() {
-		return "Arena";
+		return "Drone";
 	}
 
 	/**
