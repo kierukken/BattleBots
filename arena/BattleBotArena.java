@@ -186,7 +186,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	/**
 	 * Set to TRUE for debugging output
 	 */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	//***********************************************
 	// MAIN SET OF CONSTANTS AVAILABLE TO THE BOTS...
