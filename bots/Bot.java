@@ -3,8 +3,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 
-import arena.BotInfo;
-import arena.Bullet;
+import arena.*;
 
 /**
  * <b>Introduction</b> <br><br>
@@ -69,14 +68,17 @@ import arena.Bullet;
  *
  * @author Sam Scott
  * @version 1.0 (March 3, 2011)
+ * @version 1.12(Nov 6.2017) RADIUS increased to 13 to accomodate larger screen sizes
+ * @version 2.4 (Feb 20, 2023) RADIUS based off of the arena width to accomodate diffent screen sizes
  */
 public abstract class Bot {
-
+	
 	/**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
 	 * square with height and width equal to RADIUS * 2.
 	 */
-	public static final int RADIUS = 13;//ROWBOTTOM was 10
+	public static final int RADIUS = 13;//TODO: Add this back in S2
+	//public static final int RADIUS = (int)(BattleBotArena.RIGHT_EDGE/105);//changed from 13//changed from 10
 
 	/**
 	 * This is your Bot's number, a unique identifier assigned at the beginning of each round.
@@ -219,7 +221,7 @@ public abstract class Bot {
 	 * should also check to make sure they are only using a single class and no
 	 * inner classes (check to make sure there is only one .class file per Bot).
 	 */
-	//final public void run()
+	final public void run()
 	{
 
 	}
@@ -229,7 +231,7 @@ public abstract class Bot {
 	 * should also check to make sure they are only using a single class and no
 	 * inner classes (check to make sure there is only one .class file per Bot).
 	 */
-	//final public void actionPerformed(ActionEvent e)
+	final public void actionPerformed(ActionEvent e)
 	{
 		
 	}

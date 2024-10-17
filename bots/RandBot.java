@@ -173,8 +173,9 @@ public class RandBot extends Bot {
 	/**
 	 * Team "Arena"
 	 */
-	public String getTeamName() {
-		return "Arena";
+	public String getTeamName()
+	{
+		return "Rand";
 	}
 
 	/**
