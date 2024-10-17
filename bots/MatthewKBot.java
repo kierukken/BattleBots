@@ -79,7 +79,7 @@ public class MatthewKBot extends Bot {
             double xDistFromBot = Math.abs(deltaXfromBot);
             double yDistFromBot = Math.abs(deltaYfromBot);
             if((xDistFromBot>minMoveIn && xDistFromBot<maxMoveIn&&yDistFromBot<13)||(yDistFromBot>minMoveIn && yDistFromBot<maxMoveIn&&xDistFromBot<13)){
-                System.out.println("BOOM");
+                // System.out.println("BOOM");
                 //This section inside the if-statement fires a bullet at another robot
                 options = removeOptions(1,2,3,4,9);
                 
@@ -104,7 +104,7 @@ public class MatthewKBot extends Bot {
                     options = removeOptions(1,2,5,6,7,8,9);
                     options = (deltaXfromBot > 0)? removeOptions(3):removeOptions(4);
                 }
-                System.out.println("Lining you up");
+                // System.out.println("Lining you up");
                 move = options[(int)(System.currentTimeMillis() % options.length)];
                 lastMove = move;
                 return(move);
@@ -118,7 +118,7 @@ public class MatthewKBot extends Bot {
                  */
                 //first check for which x or y postiion is closer to firing range
                 //check this after making sure no bullets are going to hit you
-                System.out.println("Getting closer to you");
+                // System.out.println("Getting closer to you");
                 if(Math.abs(xDistFromBot-25) <= Math.abs(yDistFromBot-25)){
                     //change x position and get rid of y options up and down
                     //only 3 and 4 (up and down) remain
@@ -148,7 +148,7 @@ public class MatthewKBot extends Bot {
             
         } else {
             //play defensively
-            System.out.println("DEFENSE");
+            // System.out.println("DEFENSE");
             //RESUME FROM HERE****************************************************************
             /*if(bullets.length > 0){
                 //put a neuron in this function later on
@@ -186,9 +186,9 @@ public class MatthewKBot extends Bot {
 
     private void printArr(int[] arr){
         for(int i=0;i<arr.length;i++){
-            System.out.print(arr[i] + " ");
+            // System.out.print(arr[i] + " ");
         }
-        System.out.println();
+        // System.out.println();
     }
     /*
      * Returns a multidimensional array of all threatening bullets within a certain radius

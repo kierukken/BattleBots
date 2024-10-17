@@ -8,7 +8,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 
-public class HannanBot extends Bot {
+public class HannanBot1 extends Bot {
 
     /**
     * My name (set when getName() first called)

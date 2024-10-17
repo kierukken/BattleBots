@@ -308,7 +308,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	 * Total number of Bots in round 1 (if you have fewer than this, the rest of the spots
 	 * in the array will be filled with Drones, RandBots, and Sentries).
 	 */
-	public static final int 	NUM_BOTS =30;//BROOKS NOV 12 2017 Changed to 16
+	public static final int 	NUM_BOTS =25;//BROOKS NOV 12 2017 Changed to 16
 	/**
 	 * Number of bullets on screen at once for each bot
 	 */
@@ -442,7 +442,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	/**
 	 * The current speed multiplier
 	 */
-	private int speed = 8;
+	private int speed = 1;
 	/**
 	 * Controls the flashing if the game is paused
 	 */
@@ -618,27 +618,27 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		bots[0] = new HumanBot();
 		addKeyListener((HumanBot)bots[0]);
 		// ******************************
-		// bots[1] = new AhmedBot();
-		// bots[2] = new RyanBot();
-		// bots[3] = new IsmailBot();
-		// bots[4] = new SaremBot();
-		// bots[5] = new JohnathanBot();
-		// bots[6] = new RebeccaBot();
-		// bots[7] = new FarrisBot();
-		// bots[8] = new BhavyaBot();
-		// bots[9] = new MatthewBot();
-		// bots[10] = new RickBot();
-		// bots[11] = new AravBot();
-		// bots[12] = new DylanBot();
+		bots[1] = new AhmedBot();
+		bots[2] = new RyanBot();
+		bots[3] = new IsmailBot();
+		bots[4] = new SaremBot();
+		bots[5] = new JohnathanBot();
+		bots[6] = new User3689bot();
+		bots[7] = new FarrisBot();
+		bots[8] = new BhavyaBot();
+		bots[9] = new MatthewKBot();
+		bots[10] = new RickBot();
+		bots[11] = new AravBot();
+		bots[12] = new DylanBot();
 		// bots[13] = new LukeBot();
-		// bots[14] = new SyedBot();
-		// bots[15] = new MarcusBot();
-		// bots[16] = new HannanBot();
+		bots[14] = new SyedBot();
+		bots[15] = new MarcusBot();
+		bots[16] = new HannanBot1();
 		// bots[17] = new LeahBot();
-		// bots[18] = new AlexanderBot();
-		// bots[19] = new MatthewBot();
-		// bots[20] = new JasonBot();
-		// bots[21] = new RickyBot();
+		bots[18] = new AlexanderBot();
+		bots[19] = new MatthewUBot();
+		bots[20] = new JasonBot();
+		bots[21] = new RickyBot();
 		
 		// bots[22] = new xxxBot();
 		// bots[23] = new xxxBot();
