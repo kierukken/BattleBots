@@ -9,21 +9,12 @@ import arena.Bullet;
 
 public class FarrisBot extends Bot {
 
-	/**
-	 * An array of trash talk messages.
-	 */
-	private String[] killMessages = { "Woohoo!!!", "In your face!", "Pwned", "Take that.", "Gotcha!", "Too easy.",
-			"Hahahahahahahahahaha :-)" };
+	BotHelper helper = new BotHelper();
 
 	/**
-	 * Next message to send, or null if nothing to send.
+	 * Bot image
 	 */
-	private String nextMessage = null;
-
-	/**
-	 * Counter to pause before sending a victory message
-	 */
-	private int msgCounter = 0;
+	Image current, up, down, right, left;
 
 	/**
 	 * This method is called at the beginning of each round. Use it to perform
@@ -75,10 +66,91 @@ public class FarrisBot extends Bot {
 	 */
 	@Override
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
+		BotHelper helper = new BotHelper();
 
-		return BattleBotArena.UP;
+		// Check for null or empty bullet array
+		if (bullets == null || bullets.length == 0) {
+			double randomValue = Math.random();
+			if (randomValue < 0.25) {
+				return BattleBotArena.UP;
+			} else if (randomValue < 0.5) {
+				return BattleBotArena.DOWN;
+			} else if (randomValue < 0.75) {
+				return BattleBotArena.LEFT;
+			} else {
+				return BattleBotArena.RIGHT;
+			}
+		}
 
-		// throw new UnsupportedOperationException("Unimplemented method 'getMove'");
+		// Find closest bullet
+		Bullet closestBullet = helper.findClosestBullet(me, bullets);
+
+		// Bullet dodging
+		if (closestBullet != null) {
+			double bulletX = closestBullet.getX();
+			double bulletY = closestBullet.getY();
+			double botX = me.getX();
+			double botY = me.getY();
+
+			double xDistanceToBullet = bulletX - botX; // x distance between bot and bullet
+			double yDistanceToBullet = bulletY - botY; // y distance between bot and bullet
+
+			double dodgeThreshold = 40;
+
+			if (Math.abs(xDistanceToBullet) < dodgeThreshold && Math.abs(yDistanceToBullet) < dodgeThreshold) {
+				if (Math.abs(xDistanceToBullet) > Math.abs(yDistanceToBullet)) {
+					if (xDistanceToBullet < 0) {
+						return BattleBotArena.RIGHT;
+					} else {
+						return BattleBotArena.LEFT;
+					}
+				} else {
+					if (yDistanceToBullet < 0) {
+						return BattleBotArena.DOWN;
+					} else {
+						return BattleBotArena.UP;
+					}
+				}
+			}
+		}
+
+		// Shooting logic
+		BotInfo nearestBot = helper.findClosestBot(me, liveBots);
+		if (nearestBot != null && shotOK) {
+			double nearBotX = nearestBot.getX();
+			double nearBotY = nearestBot.getY();
+			double botX = me.getX();
+			double botY = me.getY();
+
+			double xDistanceToNearestBot = nearBotX - botX; // x distance between my bot and nearest bot
+			double yDistanceToNearestBot = nearBotY - botY; // y distance between my bot and nearest bot
+
+			if (Math.abs(xDistanceToNearestBot) > Math.abs(yDistanceToNearestBot)) {
+				if (xDistanceToNearestBot > 0) {
+					return BattleBotArena.FIRERIGHT;
+				} else {
+					return BattleBotArena.FIRELEFT;
+				}
+			} else {
+				if (yDistanceToNearestBot > 0) {
+					return BattleBotArena.FIREUP;
+				} else {
+					return BattleBotArena.FIREDOWN;
+				}
+			}
+		}
+
+		// Default random movement
+		double randomValue = Math.random();
+		if (randomValue < 0.25) {
+			return BattleBotArena.UP;
+		} else if (randomValue < 0.5) {
+			return BattleBotArena.DOWN;
+		} else if (randomValue < 0.75) {
+			return BattleBotArena.LEFT;
+		} else {
+			return BattleBotArena.RIGHT;
+		}
 	}
 
 	/**
@@ -95,8 +167,8 @@ public class FarrisBot extends Bot {
 	 */
 	@Override
 	public void draw(Graphics g, int x, int y) {
-
 		g.drawImage(current, x, y, Bot.RADIUS * 2, Bot.RADIUS * 2, null);
+
 		// throw new UnsupportedOperationException("Unimplemented method 'draw'");
 	}
 
@@ -141,16 +213,9 @@ public class FarrisBot extends Bot {
 	 */
 	@Override
 	public String outgoingMessage() {
-
-		/**
-		 * This is called whenever the referee or a Bot sends a broadcast message.
-		 *
-		 * @param botNum The ID of the Bot who sent the message, or
-		 *               <i>BattleBotArena.SYSTEM_MSG</i> if the message is from the
-		 *               referee.
-		 * @param msg    The text of the message that was broadcast.
-		 */
-		throw new UnsupportedOperationException("Unimplemented method 'outgoingMessage'");
+		return "";
+		// throw new UnsupportedOperationException("Unimplemented method
+		// 'outgoingMessage'");
 	}
 
 	/**
@@ -163,14 +228,9 @@ public class FarrisBot extends Bot {
 	 */
 	@Override
 	public void incomingMessage(int botNum, String msg) {
-		if (botNum == BattleBotArena.SYSTEM_MSG && msg.matches(".*destroyed by " + getName() + ".*")) {
-			int msgNum = (int) (Math.random() * killMessages.length);
-			nextMessage = killMessages[msgNum];
-			msgCounter = (int) (Math.random() * 30 + 30);
-		}
+		// throw new UnsupportedOperationException("Unimplemented method
+		// 'incomingMessage'");
 	}
-	// throw new UnsupportedOperationException("Unimplemented method
-	// 'incomingMessage'");
 
 	/**
 	 * This is called by the arena at startup to find out what image names you
@@ -211,7 +271,19 @@ public class FarrisBot extends Bot {
 	 */
 	@Override
 	public void loadedImages(Image[] images) {
-		throw new UnsupportedOperationException("Unimplemented method 'loadedImages'");
+		if (images != null) {
+			if (images.length > 0)
+				up = images[0];
+			if (images.length > 1)
+				down = images[1];
+			if (images.length > 2)
+				right = images[2];
+			if (images.length > 3)
+				left = images[3];
+			current = up;
+		}
+		// throw new UnsupportedOperationException("Unimplemented method
+		// 'loadedImages'");
 	}
 
 	/**

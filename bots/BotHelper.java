@@ -38,7 +38,8 @@ public class BotHelper {
 		return Math.sqrt(Math.pow(calcDisplacement(x1, x2), 2) + Math.pow(calcDisplacement(y1, y2), 2));
 	}
 
-	//BROOKS: The manhattan distance functions used to be static - changed to be non-static
+	// BROOKS: The manhattan distance functions used to be static - changed to be
+	// non-static
 	public double calcManhattanDist(double _dX, double _dY) {
 		return Math.abs(_dX) + Math.abs(_dY);
 	}
@@ -47,7 +48,7 @@ public class BotHelper {
 		return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 	}
 
-	public Bullet findClosest(BotInfo _me, Bullet[] _bullets) {
+	public Bullet findClosestBullet(BotInfo _me, Bullet[] _bullets) {
 		Bullet closest;
 		double distance, closestDist;
 		// TODO: Fix the error here before the next semester - In the mean time be sure
@@ -64,7 +65,7 @@ public class BotHelper {
 		return closest;
 	}
 
-	public BotInfo findClosest(BotInfo _me, BotInfo[] _bots) {
+	public BotInfo findClosestBot(BotInfo _me, BotInfo[] _bots) {
 		BotInfo closest;
 		double distance, closestDist;
 		// TODO: Fix the error here before the next semester
