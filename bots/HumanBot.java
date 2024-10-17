@@ -55,6 +55,7 @@ public class HumanBot extends Bot implements KeyListener {
 		cocked = shotOK;
 		int moveNow = move;
 		move = resume;
+		
 		return moveNow;
 	}
 

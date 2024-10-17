@@ -37,7 +37,8 @@ public class BotHelper {
 		return Math.sqrt(Math.pow(calcDisplacement(x1, x2), 2) + Math.pow(calcDisplacement(y1, y2), 2));
 	}
 
-	//BROOKS: The manhattan distance functions used to be static - changed to be non-static
+	// BROOKS: The manhattan distance functions used to be static - changed to be
+	// non-static
 	public double calcManhattanDist(double _dX, double _dY) {
 		return Math.abs(_dX) + Math.abs(_dY);
 	}
