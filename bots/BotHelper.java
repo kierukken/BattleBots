@@ -3,6 +3,7 @@
  */
 package bots;
 
+import java.util.ArrayList;
 import arena.BotInfo;
 import arena.Bullet;
 
@@ -37,8 +38,7 @@ public class BotHelper {
 		return Math.sqrt(Math.pow(calcDisplacement(x1, x2), 2) + Math.pow(calcDisplacement(y1, y2), 2));
 	}
 
-	// BROOKS: The manhattan distance functions used to be static - changed to be
-	// non-static
+	//BROOKS: The manhattan distance functions used to be static - changed to be non-static
 	public double calcManhattanDist(double _dX, double _dY) {
 		return Math.abs(_dX) + Math.abs(_dY);
 	}
@@ -48,12 +48,9 @@ public class BotHelper {
 	}
 
 	public Bullet findClosest(BotInfo _me, Bullet[] _bullets) {
-		if(_bullets == null || _bullets.length ==0){
-			return null ;
-		}
 		Bullet closest;
 		double distance, closestDist;
-		
+		// TODO: Fix the error here before the next semester - In the mean time be sure
 		// to error check as this will crash if there are no bullets
 		closest = _bullets[0];
 		closestDist = Math.abs(_me.getX() - closest.getX()) + Math.abs(_me.getY() - closest.getY());
@@ -68,11 +65,9 @@ public class BotHelper {
 	}
 
 	public BotInfo findClosest(BotInfo _me, BotInfo[] _bots) {
-		if(_bots == null || _bots.length ==  0 ){
-			return null ; 
-		}
 		BotInfo closest;
 		double distance, closestDist;
+		// TODO: Fix the error here before the next semester
 		closest = _bots[0];
 		closestDist = Math.abs(_me.getX() - closest.getX()) + Math.abs(_me.getY() - closest.getY());
 		for (int i = 1; i < _bots.length; i++) {

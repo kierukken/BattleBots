@@ -308,7 +308,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	 * Total number of Bots in round 1 (if you have fewer than this, the rest of the spots
 	 * in the array will be filled with Drones, RandBots, and Sentries).
 	 */
-	public static final int 	NUM_BOTS = 30;//BROOKS NOV 12 2017 Changed to 16
+	public static final int 	NUM_BOTS =30;//BROOKS NOV 12 2017 Changed to 16
 	/**
 	 * Number of bullets on screen at once for each bot
 	 */
@@ -620,13 +620,13 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// ******************************
 		// bots[1] = new AhmedBot();
 		// bots[2] = new RyanBot();
-		//bots[3] = new IsmailBot();
+		// bots[3] = new IsmailBot();
 		// bots[4] = new SaremBot();
 		// bots[5] = new JohnathanBot();
 		// bots[6] = new RebeccaBot();
 		// bots[7] = new FarrisBot();
 		// bots[8] = new BhavyaBot();
-		// bots[9] = new MatthewKBot();
+		// bots[9] = new MatthewBot();
 		// bots[10] = new RickBot();
 		// bots[11] = new AravBot();
 		// bots[12] = new DylanBot();
@@ -639,7 +639,6 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// bots[19] = new MatthewBot();
 		// bots[20] = new JasonBot();
 		// bots[21] = new RickyBot();
-		bots[1] = new MatthewUBot();
 		
 		// bots[22] = new xxxBot();
 		// bots[23] = new xxxBot();
