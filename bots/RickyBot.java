@@ -45,7 +45,7 @@ public class RickyBot extends Bot{
             for (int i = 0; i < bullets.length; i++)
             {
                 Bullet currentBullet = bullets[i];
-                if (Math.sqrt(Math.pow(Math.abs(midX - currentBullet.getX()), 2) + Math.pow(Math.abs(midY - currentBullet.getY()), 2)) <= Bot.RADIUS) System.out.println("get hitted");
+                // if (Math.sqrt(Math.pow(Math.abs(midX - currentBullet.getX()), 2) + Math.pow(Math.abs(midY - currentBullet.getY()), 2)) <= Bot.RADIUS) System.out.println("get hitted");
 
                 if (Math.abs(midX - currentBullet.getX()) <= saveRange && Math.abs(midY - currentBullet.getY()) <= saveRange) dontMove = true;
 

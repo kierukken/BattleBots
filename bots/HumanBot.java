@@ -31,8 +31,9 @@ public class HumanBot extends Bot implements KeyListener {
 	private boolean cocked = true;
 	private String msg = null;
 
-		public HumanBot() {
+	public HumanBot() {
 		// TODO Auto-generated constructor stub
+			
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class HumanBot extends Bot implements KeyListener {
 	public String[] imageNames() {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}	
 
 	@Override
 	public void incomingMessage(int botNum, String msg) {
