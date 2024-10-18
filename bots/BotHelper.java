@@ -38,6 +38,7 @@ public class BotHelper {
 
 	//Call this as BotHelper.manhattanDist( , )
 	public static double calcManhattanDist(double _dX, double _dY){
+
 		return Math.abs(_dX) + Math.abs(_dY);
 	}
 	
