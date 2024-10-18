@@ -15,13 +15,17 @@ public class BhavyaBot extends Bot {
     private Map<Bullet , double[]> bulletPreviousPositions = new HashMap<>() ; // A hasp map to store bullet's previous positions
     double [] botPreviousPositions = new double[2] ; // A Double array to store bot's previous positions
     double[] botPositions = new double[2] ; // A double array to store the bot's current positions
+    BotInfo[] closestBots = new BotInfo[3] ; 
+
     private final  double dangerBotDistance = 400 ; // Distance variable to figure out when a bot danger and when not
     private int timeStamp = 0 ; // Time Stamp to take care of certain things in the program
     private int bulletsShot = 0 ;  // Variable to store how many bullets have been shot 
+    private int totalBulletsShot = 0;
     private String lastDecision = "" ; // String to store the last expected move of the bot
     private int count = 0 ; // Counter to implement the opening stratergy of the bot
     private boolean startShoot = true ; // Boolean To implement the opening stratergy of the bot
     private String moveToBot = "" ;  // String to store where to move to reach a bot
+    private boolean testing = true ; 
     @Override
     public void newRound() {
         count = 0 ; 
@@ -30,6 +34,7 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
+     
       // Finding the two closest Bullets
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets) ;
      // Adding bot's current Position to the botPosition
@@ -58,22 +63,27 @@ public class BhavyaBot extends Bot {
         }
       }
      // Using Count and startShoot variable to implement the opening stratergy
-      if(count < 4 ){
-        count++ ;
-        return BattleBotArena.DOWN;
-      } else if (startShoot){
+    //   if(count < 4 ){
+    //     count++ ;
+    //     return BattleBotArena.DOWN;
+      //} 
+       if (startShoot){
         count++ ;
         switch(count) {
-            case 5 -> {
+            case 2 -> {
+                totalBulletsShot++ ;
                 return BattleBotArena.FIREDOWN ;
               }
-            case 6 -> {
+            case 3-> {
+                totalBulletsShot++ ; 
                 return BattleBotArena.FIREUP ;
               }
-            case 7 -> {
+            case 4 -> {
+                totalBulletsShot++ ; 
                 return BattleBotArena.FIRERIGHT ;
               }
-            case 8 -> {
+            case 5 -> {
+                totalBulletsShot++ ; 
                 startShoot = false ;
                 return BattleBotArena.FIRELEFT ;
               }
@@ -87,13 +97,14 @@ public class BhavyaBot extends Bot {
         }
       }
       // Checking if the bot can shoot 
-      if(shotOK && bulletsShot < 3 ){
+      if(shotOK && bulletsShot < 2 ){
         // Finding a threatBot if there
         BotInfo threatBot = isBotNearby(me, liveBots);
         if(threatBot != null){
             // Determining in which direction the danger Bot is 
             String shootDirection = dangerBotShootDirection(me, threatBot);
             if(shotOK){
+                totalBulletsShot++ ; 
                 bulletsShot++ ;
                 return stringToCommand(shootDirection) ;
             }
@@ -174,6 +185,9 @@ public class BhavyaBot extends Bot {
      * @returns - Returns a Array of Bullets which has the positions of the closest and second closest bullet.
      */
     public Bullet[] findTwoClosestBullets(BotInfo me , Bullet[] bullets){
+        if(bullets.length == 0 ){
+            return null ; 
+        }
         // Finding the closest Bullet 
         Bullet closest = bothelper.findClosest(me, bullets) ;
         // if no Bullet on screen return empty array 
@@ -440,4 +454,13 @@ public class BhavyaBot extends Bot {
         }
         return null ; 
     }
+    // public BotInfo[] findThreeClosestBots(BotInfo me , BotInfo[] liveBotInfos){
+    //     List<BotInfo> remainingBots = new ArrayList<>(Arrays.asList(liveBotInfos));
+    //      for(int i = 0 ; i < 3 ; i++){
+    //           BotInfo closest = bothelper.findClosest(me, remainingBots);
+    //           closestBots[i] = closest ; 
+    //           remainingBots.remove(closest) ; 
+    //          //remainingBots.get(3);
+    //      }
+    // }
 }
