@@ -58,7 +58,6 @@ public class BhavyaBot extends Bot {
                 return stringToCommand(killBot);
             }
             moveToBot = goToBot(me, nearestBot);
-            
             return stringToCommand(moveToBot);
         }
       }
@@ -112,6 +111,7 @@ public class BhavyaBot extends Bot {
       }
       String moveDecision = "STAY STILL" ; 
       // Looping through the array of closestBullets to escape from them 
+      if(closestBullets != null){
       for(Bullet bullet : closestBullets){
              if(bullet != null){
                 double [] prevPosition = bulletPreviousPositions.get(bullet) ;
@@ -127,6 +127,7 @@ public class BhavyaBot extends Bot {
                 }
              }
       }
+    }
       // Updating Bot positions
       if(botPositions != null){
         updateBotPosition(botPositions, timeStamp);
@@ -334,12 +335,9 @@ public class BhavyaBot extends Bot {
     public BotInfo isBotNearby(BotInfo me , BotInfo[] liveBots){
         for(BotInfo otherBots : liveBots){
             if(otherBots != null && !otherBots.equals(me)){
-                double distance = bothelper.calcDistance(otherBots.getX(), otherBots.getY(), me.getX(), me.getY()) ;
-                if(distance < dangerBotDistance){
-                    if(Math.abs(otherBots.getX() - me.getX()) < 10 || Math.abs(otherBots.getY() - me.getY()) < 20){
-                        return otherBots ; 
-                    }
-                }
+              if(otherBots.getX() == me.getX() || otherBots.getY() == me.getY()){
+                return otherBots ; 
+              }
             }
         }
         return null ; 
@@ -454,13 +452,5 @@ public class BhavyaBot extends Bot {
         }
         return null ; 
     }
-    // public BotInfo[] findThreeClosestBots(BotInfo me , BotInfo[] liveBotInfos){
-    //     List<BotInfo> remainingBots = new ArrayList<>(Arrays.asList(liveBotInfos));
-    //      for(int i = 0 ; i < 3 ; i++){
-    //           BotInfo closest = bothelper.findClosest(me, remainingBots);
-    //           closestBots[i] = closest ; 
-    //           remainingBots.remove(closest) ; 
-    //          //remainingBots.get(3);
-    //      }
-    // }
+
 }
