@@ -26,6 +26,9 @@ public class BhavyaBot extends Bot {
     private boolean startShoot = true ; // Boolean To implement the opening stratergy of the bot
     private String moveToBot = "" ;  // String to store where to move to reach a bot
     private boolean testing = true ; 
+    private BotInfo nearestBot ; 
+    private BotInfo dangerBot ; 
+    private boolean danger = false  ; 
     @Override
     public void newRound() {
         count = 0 ; 
@@ -34,9 +37,18 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-     
+       if(danger){
+        danger = false ; 
+        String direction  = getBotDirection(me, dangerBot) ; 
+        if(!direction.equals("DON'T SHOOT")){
+            return stringToCommand(direction) ; 
+        }
+       }
       // Finding the two closest Bullets
       Bullet[] closestBullets = findTwoClosestBullets(me, bullets) ;
+      if(closestBullets == null){
+        return BattleBotArena.DOWN ; 
+      }
      // Adding bot's current Position to the botPosition
       double botCurrentX = me.getX() ; 
       double botCurrentY = me.getY() ; 
@@ -50,7 +62,9 @@ public class BhavyaBot extends Bot {
                 return handleStuck(lastDecision) ; 
             }
             // Finds the nearest Bot
-        BotInfo nearestBot = bothelper.findClosest(me, liveBots);
+        if(liveBots != null){
+            nearestBot = bothelper.findClosest(me, liveBots);
+        }
         if(nearestBot != null){
             String killBot = killBot(me, nearestBot);
             if(killBot != null){
@@ -90,7 +104,7 @@ public class BhavyaBot extends Bot {
       }
 
       // Checking if the bot is stuck somewhere
-      if(timeStamp > 120 && botPreviousPositions != null && botPositions != null && !lastDecision.isEmpty()){
+      if(timeStamp > 300 && botPreviousPositions != null && botPositions != null && !lastDecision.isEmpty()){
         if(checkStuck(botPreviousPositions, botPositions, lastDecision)){
             return handleStuck(lastDecision) ; 
         }
@@ -112,28 +126,40 @@ public class BhavyaBot extends Bot {
       String moveDecision = "STAY STILL" ; 
       // Looping through the array of closestBullets to escape from them 
       if(closestBullets != null){
-      for(Bullet bullet : closestBullets){
-             if(bullet != null){
-                double [] prevPosition = bulletPreviousPositions.get(bullet) ;
-                if(prevPosition != null){
-                    String direction = getBulletDirection(bullet, prevPosition[0], prevPosition[1]);
-                    String reaction = reactToBullet(bullet, direction, me) ; 
-                    if(!reaction.equals("STAY STILL")){
-                        bulletsShot = 0 ; 
-                        moveDecision = reaction ; 
-                        lastDecision = reaction ; 
-                        break ; 
+        for(Bullet bullet : closestBullets){
+                if(bullet != null){
+                    double [] prevPosition = bulletPreviousPositions.get(bullet) ;
+                    if(prevPosition != null){
+                        String direction = getBulletDirection(bullet, prevPosition[0], prevPosition[1]);
+                        String reaction = reactToBullet(bullet, direction, me) ; 
+                        if(!reaction.equals("STAY STILL")){
+                             dangerBot = checkMoveSafety(reaction, me, liveBots);
+                            if(dangerBot != null){
+                               danger = true ;   
+                            }
+                            bulletsShot = 0 ; 
+                            moveDecision = reaction ; 
+                            lastDecision = reaction ; 
+                            break ; 
+                        }
                     }
                 }
-             }
-      }
+                else{
+                    System.out.println("Error found at line 133");
+                }
+        }
+    }
+    else{
+        System.out.println("Error found at line 135");
     }
       // Updating Bot positions
       if(botPositions != null){
         updateBotPosition(botPositions, timeStamp);
       }
       // Update Bullet Positions
+      if(closestBullets != null){
       updateBulletTracking(closestBullets);
+    }
       // Returning actions
       return stringToCommand(moveDecision) ; 
     } 
@@ -199,7 +225,11 @@ public class BhavyaBot extends Bot {
         remainingBullets.remove(closest) ; 
 
         // Finding the second closest bullet 
-         Bullet secondClosest = bothelper.findClosest(me, remainingBullets.toArray(new Bullet[0]));
+        Bullet secondClosest = null ;
+            if(!remainingBullets.isEmpty()){
+                secondClosest = bothelper.findClosest(me, remainingBullets.toArray(new Bullet[0]));
+
+            }
          return new Bullet[]{closest , secondClosest} ; 
     } 
     /*
@@ -225,47 +255,55 @@ public class BhavyaBot extends Bot {
     * @returns - String containing the direction of the bullet
     */ 
     public String getBulletDirection(Bullet bullet , double prevX , double prevY){
-        double currentX = bullet.getX() ; 
-        double currentY = bullet.getY() ; 
-        double deltaX = currentX - prevX ; 
-        double deltaY = currentY - prevY ; 
-        if(deltaX == 0 && deltaY < 0 ){
-            return "UP" ; 
+        if(bullet != null){
+            double currentX = bullet.getX() ; 
+            double currentY = bullet.getY() ; 
+            double deltaX = currentX - prevX ; 
+            double deltaY = currentY - prevY ; 
+            if(deltaX == 0 && deltaY < 0 ){
+                return "UP" ; 
+            }
+            else if(deltaX == 0 && deltaY > 0 ){
+                return "DOWN" ;
+            }
+            else if (deltaY == 0 && deltaX < 0 ){
+                return "LEFT" ; 
+            }
+            else if(deltaY == 0 && deltaX > 0 ){
+                return "RIGHT" ;
+            }
+            else{
+                return "STAY" ;
+            }
         }
-        else if(deltaX == 0 && deltaY > 0 ){
-            return "DOWN" ;
-        }
-        else if (deltaY == 0 && deltaX < 0 ){
-            return "LEFT" ; 
-        }
-        else if(deltaY == 0 && deltaX > 0 ){
-            return "RIGHT" ;
-        }
-        else{
-            return "STAY" ;
-        }
+        return "STAY" ;
     }   
     /*
      * This function is used to react to a bullet coming close
      * @params - Bullet bullet(Bullet against which action is to be taken) , String direction(Direction of the bullet) , BotInfo me(All information about my bot)
      */
     public String reactToBullet(Bullet bullet , String direction , BotInfo me){
-        double bulletX = bullet.getX() ; 
-        double bulletY = bullet.getY() ;
-        if((direction.equals("RIGHT") || direction.equals("LEFT"))){
-            return (bulletY - me.getY() > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
-        }
-        else if((direction.equals("RIGHT") || direction.equals("LEFT")) && bulletY - me.getY() == 0 ){
-                return (me.getY() - 350 > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
-        }
-         else if ((direction.equals("UP") || direction.equals("DOWN"))){
-            return(bulletX - me.getX() > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
-        }
-        else if ((direction.equals("UP") || direction.equals("DOWN")) && bulletX - me.getX() == 0 ){
-            return (me.getX() - 650 > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
-        }
+        if(bullet != null){
+            double bulletX = bullet.getX() ; 
+            double bulletY = bullet.getY() ;
+            if((direction.equals("RIGHT") || direction.equals("LEFT"))){
+                return (bulletY - me.getY() > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
+            }
+            else if((direction.equals("RIGHT") || direction.equals("LEFT")) && bulletY - me.getY() == 0 ){
+                    return (me.getY() - 350 > 0 ) ? "MOVE UP" : "MOVE DOWN" ; 
+            }
+            else if ((direction.equals("UP") || direction.equals("DOWN"))){
+                return(bulletX - me.getX() > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
+            }
+            else if ((direction.equals("UP") || direction.equals("DOWN")) && bulletX - me.getX() == 0 ){
+                return (me.getX() - 650 > 0 ) ? "MOVE LEFT" : "MOVE RIGHT" ; 
+            }
+            return "STAY STILL" ; 
+    }
+    else{
         return "STAY STILL" ; 
     }
+}
     /*
      * This function is used to clean the bulletPreviousPositions map in case any bullet is no more active on the screen
      * @params - Bullet[] currentBullets ( Information about all the bullets present on the screen)
@@ -452,5 +490,31 @@ public class BhavyaBot extends Bot {
         }
         return null ; 
     }
-
+    public BotInfo checkMoveSafety (String moveDecision , BotInfo me , BotInfo livebots[]){
+        double newX = me.getX() ; 
+        double newY = me.getY() ; 
+        switch(moveDecision){
+            case "MOVE UP" -> newY += 3.0 ;
+            case "MOVE DOWN" -> newY -= 3.0 ;
+            case "MOVE RIGHT" -> newX += 3.0 ;
+            case "MOVE LEFT" -> newX -= 3.0 ;        
+        }
+        for(BotInfo bots : livebots){
+            double botX = bots.getX() ; 
+            double botY = bots.getY() ; 
+            if(Math.abs(botX - newX) < 1 || Math.abs(botY - newY) < 1 ){
+                return bots ; 
+            }
+        }
+        return null ; 
+    }
+    public String getBotDirection(BotInfo me , BotInfo targetBot){
+        if(Math.abs(targetBot.getX() - me.getX()) < 5 ){
+            return (targetBot.getY() > me.getY()) ? "SHOOT DOWN" : "SHOOT UP" ;
+        }
+        else if (Math.abs(targetBot.getY() - me.getY()) < 5){
+            return (targetBot.getX() > me.getX()) ? "SHOOT RIGHT" : "SHOOT LEFT" ;
+        }
+        return "DON'T SHOOT" ; 
+    }
 }
