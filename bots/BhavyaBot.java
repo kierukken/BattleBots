@@ -29,19 +29,40 @@ public class BhavyaBot extends Bot {
     private BotInfo nearestBot ; 
     private BotInfo dangerBot ; 
     private boolean danger = false  ; 
+    private boolean shootDanger = false ; 
+    private boolean bulletsShort = false ; 
     @Override
     public void newRound() {
         count = 0 ; 
         startShoot = true ; 
+        totalBulletsShot =0 ;
     }
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
+       if(totalBulletsShot > 25 && bulletsShort == false  ){
+        shotOK = false ; 
+        BotInfo closestDeadBot = bothelper.findClosest(me, deadBots);
+        if(Math.abs(me.getX() - closestDeadBot.getX()) > 5 || Math.abs(me.getY() - closestDeadBot.getY()) > 5){
+               String move = goToBot(me, closestDeadBot);
+               return stringToCommand(move) ; 
+        }
+        else{
+            bulletsShort = true ; 
+        }
+       }
        if(danger){
         danger = false ; 
         String direction  = getBotDirection(me, dangerBot) ; 
         if(!direction.equals("DON'T SHOOT")){
+            shootDanger = true;
             return stringToCommand(direction) ; 
+        }
+       }
+       if(shootDanger){
+        shootDanger = false ; 
+        if(lastDecision != null){
+            return stringToCommand(lastDecision) ; 
         }
        }
       // Finding the two closest Bullets
@@ -68,7 +89,7 @@ public class BhavyaBot extends Bot {
         if(nearestBot != null){
             String killBot = killBot(me, nearestBot);
             if(killBot != null){
-                
+                totalBulletsShot++ ; 
                 return stringToCommand(killBot);
             }
             moveToBot = goToBot(me, nearestBot);
@@ -83,6 +104,9 @@ public class BhavyaBot extends Bot {
        if (startShoot){
         count++ ;
         switch(count) {
+            case 1 -> {
+                return (me.getX() > 650 ) ? BattleBotArena.UP : BattleBotArena.DOWN ; 
+            }
             case 2 -> {
                 totalBulletsShot++ ;
                 return BattleBotArena.FIREDOWN ;
@@ -145,7 +169,7 @@ public class BhavyaBot extends Bot {
                     }
                 }
                 else{
-                    System.out.println("Error found at line 133");
+                   // System.out.println("Error found at line 133");
                 }
         }
     }
