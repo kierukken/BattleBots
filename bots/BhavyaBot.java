@@ -31,6 +31,7 @@ public class BhavyaBot extends Bot {
     private boolean danger = false  ; 
     private boolean shootDanger = false ; 
     private boolean bulletsShort = false ; 
+
     @Override
     public void newRound() {
         count = 0 ; 
@@ -40,6 +41,14 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
+           Arrays.asList(liveBots) ; 
+           for(BotInfo bots : liveBots){
+            if(bots.getTeamName().equals("Warriors")){
+                 
+            }
+     
+           }
+      
        if(totalBulletsShot > 25 && bulletsShort == false  ){
         shotOK = false ; 
         BotInfo closestDeadBot = bothelper.findClosest(me, deadBots);
@@ -202,7 +211,7 @@ public class BhavyaBot extends Bot {
 
     @Override
     public String getTeamName() {
-        return "Ka'ah";
+        return "Warriors";
       
     }
 
