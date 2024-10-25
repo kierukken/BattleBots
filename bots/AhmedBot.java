@@ -1,13 +1,12 @@
 package bots;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.util.Random;
-
 import arena.BattleBotArena;
 import arena.BotInfo;
 import arena.Bullet;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Random;
 public class AhmedBot extends Bot{
     private Random random;
     private static final int RADIUS = 10; //Radius for drawing
@@ -61,7 +60,7 @@ public class AhmedBot extends Bot{
     public String getTeamName() {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'getTeamName'");
-        return "Bot";
+        return "Warriors";
 
     }
 

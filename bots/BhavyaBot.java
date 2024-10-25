@@ -31,24 +31,24 @@ public class BhavyaBot extends Bot {
     private boolean danger = false  ; 
     private boolean shootDanger = false ; 
     private boolean bulletsShort = false ; 
-
+    private String startDirection = "" ; 
+    
     @Override
     public void newRound() {
         count = 0 ; 
         startShoot = true ; 
         totalBulletsShot =0 ;
+
     }
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-           Arrays.asList(liveBots) ; 
-           for(BotInfo bots : liveBots){
-            if(bots.getTeamName().equals("Warriors")){
-                 
-            }
-     
-           }
-      
+        /* CODE FOR NOT SHOOTING OUR TEAM BOTS NEXT THREE LINES */
+           List<BotInfo> oppBots = new ArrayList<>(Arrays.asList(liveBots));
+           oppBots.removeIf(bot -> bot.getTeamName().equals("Warriors"));
+           liveBots = oppBots.toArray(new BotInfo[0]);
+           
+
        if(totalBulletsShot > 25 && bulletsShort == false  ){
         shotOK = false ; 
         BotInfo closestDeadBot = bothelper.findClosest(me, deadBots);
@@ -64,7 +64,7 @@ public class BhavyaBot extends Bot {
         danger = false ; 
         String direction  = getBotDirection(me, dangerBot) ; 
         if(!direction.equals("DON'T SHOOT")){
-            shootDanger = true;
+            shootDanger = true ; 
             return stringToCommand(direction) ; 
         }
        }
@@ -114,6 +114,7 @@ public class BhavyaBot extends Bot {
         count++ ;
         switch(count) {
             case 1 -> {
+                System.out.println("START DIRECTION : " + startDirection);
                 return (me.getX() > 650 ) ? BattleBotArena.UP : BattleBotArena.DOWN ; 
             }
             case 2 -> {
@@ -129,13 +130,14 @@ public class BhavyaBot extends Bot {
                 return BattleBotArena.FIRERIGHT ;
               }
             case 5 -> {
-                totalBulletsShot++ ; 
-                startShoot = false ;
+                totalBulletsShot++ ;
+                startShoot = false ; 
                 return BattleBotArena.FIRELEFT ;
               }
+        
         }
       }
-
+      
       // Checking if the bot is stuck somewhere
       if(timeStamp > 300 && botPreviousPositions != null && botPositions != null && !lastDecision.isEmpty()){
         if(checkStuck(botPreviousPositions, botPositions, lastDecision)){
@@ -550,4 +552,17 @@ public class BhavyaBot extends Bot {
         }
         return "DON'T SHOOT" ; 
     }
+    public boolean shotAtEdge(BotInfo me ){
+     int posY = Math.abs((int) me.getY() - (int) BattleBotArena.BOTTOM_EDGE) ; 
+     int posX = Math.abs((int) me.getX() - (int) BattleBotArena.RIGHT_EDGE) ;
+     if(posY > 695 || posY < 5 || posX > 1295 || posX < 5){ return true;}
+     else{return false; } 
+     if(posX > 1295){ return "MOVE RIGHT" ; }  
+     if(posX < 5){ return "MOVE LEFT" ; }
+     if(posY > 695){ return " MOVE DOWN" ; } 
+     if(posY < 5 ){ return " MOVE UP" ; }  
+     if(posX > 1295){ return "MOVE RIGHT" ; }  
+     if(posX < 5){ return "MOVE LEFT" ; }  
+         }
+         public String reactToEdge(me)
 }
