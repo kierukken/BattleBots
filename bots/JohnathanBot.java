@@ -94,7 +94,7 @@ public class JohnathanBot extends Bot {
 
     @Override
     public String getTeamName() {
-        return "Warriors"; // Team name
+        return ""; // Team name
     }
 
     @Override

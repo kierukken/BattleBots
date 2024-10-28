@@ -60,7 +60,7 @@ public class AhmedBot extends Bot{
     public String getTeamName() {
         // TODO Auto-generated method stub
         //throw new UnsupportedOperationException("Unimplemented method 'getTeamName'");
-        return "Warriors";
+        return "Bot";
 
     }
 
