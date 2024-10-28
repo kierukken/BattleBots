@@ -45,7 +45,8 @@ public class BhavyaBot extends Bot {
 
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-        System.out.println(timeStamp);
+        timeStamp++;
+       
         // This function implements if the bot is at the edge
         if(atEdge){
             if(moveCounter == 5 ){
@@ -63,11 +64,11 @@ public class BhavyaBot extends Bot {
             }
         }
         /* CODE FOR NOT SHOOTING OUR TEAM BOTS NEXT THREE LINES */
-        
+        if(timeStamp < 1400){
            List<BotInfo> oppBots = new ArrayList<>(Arrays.asList(liveBots));
            oppBots.removeIf(bot -> bot.getTeamName().equals("Warriors"));
            liveBots = oppBots.toArray(new BotInfo[0]);
-           
+        }
        // This block is used for making sure the bot never runs out of bullets
        if(totalBulletsShot > 25 && bulletsShort == false  ){
         shotOK = false ; 
@@ -133,28 +134,26 @@ public class BhavyaBot extends Bot {
       //} 
        if (startShoot){
         count++ ;
+        while(count <  4){
+            return (me.getX() > 650 ) ? BattleBotArena.UP : BattleBotArena.DOWN ; 
+        }
         switch(count) {
-            case 1 -> {
-                System.out.println("START DIRECTION : " + startDirection);
-                return (me.getX() > 650 ) ? BattleBotArena.UP : BattleBotArena.DOWN ; 
+            case 4 -> {
+               return BattleBotArena.FIRELEFT ; 
             }
-            case 2 -> {
+            case 5 -> {
                 totalBulletsShot++ ;
                 return BattleBotArena.FIREDOWN ;
               }
-            case 3-> {
+            case 6-> {
                 totalBulletsShot++ ; 
                 return BattleBotArena.FIREUP ;
               }
-            case 4 -> {
+            case 7 -> {
                 totalBulletsShot++ ; 
                 return BattleBotArena.FIRERIGHT ;
               }
-            case 5 -> {
-                totalBulletsShot++ ;
-                startShoot = false ; 
-                return BattleBotArena.FIRELEFT ;
-              }
+          
         
         }
       }
@@ -210,7 +209,7 @@ public class BhavyaBot extends Bot {
         }
     }
     else{
-        System.out.println("Error found at line 135");
+        //System.out.println("Error found at line 135");
     }
       // Updating Bot positions
       if(botPositions != null){
