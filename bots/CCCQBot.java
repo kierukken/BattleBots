@@ -3,6 +3,7 @@ package bots;
 import java.awt.Graphics;
 import java.awt.Image;
 
+import arena.BattleBotArena;
 import arena.BotInfo;
 import arena.Bullet;
 
@@ -24,7 +25,9 @@ public class CCCQBot extends Bot {
 	 * This method is called at the beginning of each round. Use it to perform
 	 * any initialization that you require when starting a new round.
 	 */
-	public abstract void newRound();
+	public void newRound() {
+
+	}
 
 	/**
 	 * This method is called at every time step to find out what you want your
@@ -62,8 +65,11 @@ public class CCCQBot extends Bot {
 		for (Bullet bullet: bullets) {
 			double[] coord = {bullet.getX(), bullet.getY()};
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
-			if ()
+			if (coord[0] > pos[0] - 13 && coord[0] < pos[0] + 13) {
+				
+			}
 		}
+		return BattleBotArena.STAY;
 	};
 
 	/**
@@ -77,7 +83,9 @@ public class CCCQBot extends Bot {
 	 * @param x The x location of the top left corner of the drawing area
 	 * @param y The y location of the top left corner of the drawing area
 	 */
-	public abstract void draw (Graphics g, int x, int y);
+	public void draw (Graphics g, int x, int y) {
+
+	}
 
 	/**
 	 * This method will only be called once, just after your Bot is created,
@@ -122,7 +130,9 @@ public class CCCQBot extends Bot {
 	 * @param botNum The ID of the Bot who sent the message, or <i>BattleBotArena.SYSTEM_MSG</i> if the message is from the referee.
 	 * @param msg The text of the message that was broadcast.
 	 */
-	public abstract void incomingMessage(int botNum, String msg);
+	public void incomingMessage(int botNum, String msg) {
+
+	}
 
 	/**
 	 * This is called by the arena at startup to find out what image names you
@@ -136,7 +146,9 @@ public class CCCQBot extends Bot {
 	 *
 	 * @return An array of image names you want the arena to load.
 	 */
-	public abstract String[] imageNames();
+	public String[] imageNames() {
+		return null;
+	}
 
 	/**
 	 * Once the arena has loaded your images (see <i>imageNames()</i>), it
@@ -152,36 +164,7 @@ public class CCCQBot extends Bot {
 	 *
 	 * @param images The array of images (or null if there was a problem)
 	 */
-	public abstract void loadedImages(Image[] images);
+	public void loadedImages(Image[] images) {
 
-	/**
-	 * Called by the arena to assign your unique id number at the start of each round.
-	 * There is probably no need to override this method.
-	 *
-	 * @param botNum Your ID number
-	 */
-	public void assignNumber(int botNum)
-	{
-		this.botNumber = botNum;
-	}
-
-	/**
-	 * Stops Bot developers from cheating by spawning a Thread. The human referee
-	 * should also check to make sure they are only using a single class and no
-	 * inner classes (check to make sure there is only one .class file per Bot).
-	 */
-	final public void run()
-	{
-
-	}
-
-	/**
-	 * Stops Bot developers from cheating by using a Timer. The human referee
-	 * should also check to make sure they are only using a single class and no
-	 * inner classes (check to make sure there is only one .class file per Bot).
-	 */
-	final public void actionPerformed(ActionEvent e)
-	{
-		
 	}
 }
