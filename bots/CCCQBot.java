@@ -57,7 +57,13 @@ public class CCCQBot extends Bot {
 	 * @param bullets	An array of all Bullet objects currently in play
 	 * @return			A legal move (use the constants defined in BattleBotArena)
 	 */
-	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets);
+	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets){
+        System.out.println(me);
+        System.out.println(shotOK);
+        System.out.println(liveBots);
+        System.out.println(deadBots);
+        System.out.println(bullets);
+    }
 
 	/**
 	 * Called when it is time to draw the Bot. Your Bot should be (mostly)
