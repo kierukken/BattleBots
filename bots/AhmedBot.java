@@ -23,11 +23,7 @@ public class AhmedBot extends Bot{
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
         // TODO Auto-generated method stub
        // throw new UnsupportedOperationException("Unimplemented method 'getMove'");
-        System.out.println(me);
-        System.out.println(shotOK);
-        System.out.println(liveBots);
-        System.out.println(deadBots);
-        System.out.println(bullets);
+
        for (Bullet bullet : bullets) {
         if (isBulletDangerous(me, bullet) )
             return moveAwayFromBullet(me, bullet);
