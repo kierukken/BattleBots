@@ -58,8 +58,11 @@ public class CCCQBot extends Bot {
 	 * @return			A legal move (use the constants defined in BattleBotArena)
 	 */
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
+		double[] pos = {me.getX(), me.getY()};
 		for (Bullet bullet: bullets) {
-			
+			double[] coord = {bullet.getX(), bullet.getY()};
+			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
+			if ()
 		}
 	};
 
