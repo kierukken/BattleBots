@@ -66,11 +66,11 @@ public class CCCQBot extends Bot {
 		for (Bullet bullet: bullets) {
 			double[] coord = {bullet.getX(), bullet.getY()};
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
-			if ((coord[0] > pos[0] - 13 && coord[0] < pos[0] + 13) && ((coord[1] < pos[1] && coord[1] + 2 * speed[1] > pos[1] - 13) || (coord[1] > pos[1] && coord[1] + 2 * speed[1] < pos[1] + 13))) {
-				return BattleBotArena.RIGHT; //dodge incoming bullet from up or down
+			if ((coord[0] > pos[0] - 13 && coord[0] < pos[0] + 13) && ((coord[1] < pos[1] && coord[1] + 5 * speed[1] > pos[1] - 13) || (coord[1] > pos[1] && coord[1] + 5 * speed[1] < pos[1] + 13))) {
+				return BattleBotArena.LEFT; //dodge incoming bullet from up or down
 			}
-			if ((coord[1] > pos[1] - 13 && coord[1] < pos[0] + 13) && ((coord[0] < pos[0] && coord[0] + 2 * speed[0] > pos[0] - 13) || (coord[0] > pos[0] && coord[0] + 2 * speed[0] < pos[0] + 13))) {
-				return BattleBotArena.DOWN; //dodge incoming bullet from left or right
+			if ((coord[1] > pos[1] - 13 && coord[1] < pos[0] + 13) && ((coord[0] < pos[0] && coord[0] + 5 * speed[0] > pos[0] - 13) || (coord[0] > pos[0] && coord[0] + 5 * speed[0] < pos[0] + 13))) {
+				return BattleBotArena.UP; //dodge incoming bullet from left or right
 			}
 		}
 		return BattleBotArena.STAY;
