@@ -8,6 +8,7 @@ import arena.BotInfo;
 import arena.Bullet;
 
 public class CCCQBot extends Bot {
+	Image picture;
 
     /**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
@@ -87,7 +88,7 @@ public class CCCQBot extends Bot {
 	 * @param y The y location of the top left corner of the drawing area
 	 */
 	public void draw (Graphics g, int x, int y) {
-
+		g.drawImage(picture , x, y , 25 , 25 , null);
 	}
 
 	/**
@@ -150,7 +151,8 @@ public class CCCQBot extends Bot {
 	 * @return An array of image names you want the arena to load.
 	 */
 	public String[] imageNames() {
-		return null;
+		String [] images = {"gpt.jpg"};
+		return images;
 	}
 
 	/**
@@ -168,6 +170,6 @@ public class CCCQBot extends Bot {
 	 * @param images The array of images (or null if there was a problem)
 	 */
 	public void loadedImages(Image[] images) {
-
+		picture = images[0];
 	}
 }
