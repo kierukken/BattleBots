@@ -57,7 +57,7 @@ public class CCCQBot extends Bot {
 	 * @param bullets	An array of all Bullet objects currently in play
 	 * @return			A legal move (use the constants defined in BattleBotArena)
 	 */
-	public abstract int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets);
+	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets);
 
 	/**
 	 * Called when it is time to draw the Bot. Your Bot should be (mostly)
@@ -78,7 +78,9 @@ public class CCCQBot extends Bot {
 	 *
 	 * @return The Bot's name
 	 */
-	public abstract String getName();
+	public String getName(){
+        return "";
+    }
 
 	/**
 	 * This method is called at every time step to find out what team you are
@@ -89,7 +91,10 @@ public class CCCQBot extends Bot {
 	 *
 	 * @return The Bot's current team name
 	 */
-	public abstract String getTeamName();
+	public String getTeamName(){
+        return "";
+    }
+    
 
 	/**
 	 * This is only called after you have requested a SEND_MESSAGE move (see
@@ -100,7 +105,9 @@ public class CCCQBot extends Bot {
 	 *
 	 * @return The message you want to broadcast
 	 */
-	public abstract String outgoingMessage();
+	public String outgoingMessage(){
+        return "L";
+    }
 
 	/**
 	 * This is called whenever the referee or a Bot sends a broadcast message.
