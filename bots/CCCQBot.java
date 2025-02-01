@@ -69,7 +69,7 @@ public class CCCQBot extends Bot {
 			if ((coord[0] > pos[0] - 13 && coord[0] < pos[0] + 13) && ((coord[1] < pos[1] && coord[1] + 5 * speed[1] > pos[1] - 13) || (coord[1] > pos[1] && coord[1] + 5 * speed[1] < pos[1] + 13))) {
 				return BattleBotArena.LEFT; //dodge incoming bullet from up or down
 			}
-			if ((coord[1] > pos[1] - 13 && coord[1] < pos[0] + 13) && ((coord[0] < pos[0] && coord[0] + 5 * speed[0] > pos[0] - 13) || (coord[0] > pos[0] && coord[0] + 5 * speed[0] < pos[0] + 13))) {
+			else if ((coord[1] > pos[1] - 13 && coord[1] < pos[0] + 13) && ((coord[0] < pos[0] && coord[0] + 5 * speed[0] > pos[0] - 13) || (coord[0] > pos[0] && coord[0] + 5 * speed[0] < pos[0] + 13))) {
 				return BattleBotArena.UP; //dodge incoming bullet from left or right
 			}
 		}

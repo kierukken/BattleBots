@@ -629,7 +629,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		round = 0;					// pre-game is round 0
 
 		// *** HUMAN TEST BOT CREATION
-		// *** Comment the next two lines out if you don't want to use the
+		// *** Commenat the next two lines out if you don't want to use the
 		// *** HumanBot (under user control)
 		bots[0] = new HumanBot();
 		addKeyListener((HumanBot)bots[0]);
