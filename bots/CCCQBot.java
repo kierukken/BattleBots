@@ -11,7 +11,7 @@ public class CCCQBot extends Bot {
 	Image picture;
 	//method to check if bot needs to move to dodge incoming bullets
 	boolean bulletTowards(double mePos, double bulletPos, double bulletSpeed) {
-		return ((bulletPos < mePos) && (bulletPos + 10 * bulletSpeed > mePos -13)) || ((bulletPos > mePos) && (bulletPos + 10 * bulletSpeed < mePos + 13));
+		return ((bulletPos < mePos) && (bulletPos + 10 * bulletSpeed > mePos - 13)) || ((bulletPos > mePos) && (bulletPos + 10 * bulletSpeed < mePos + 13));
 	}
     /**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
@@ -71,18 +71,22 @@ public class CCCQBot extends Bot {
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
 				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
-					for (BotInfo deadBot: deadBots){
-						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
+					for (BotInfo deadBot: deadBots){ //avoid dead bots
+						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
 						if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
-							if (deadPos[0] + 39 >  bulletPos[0]) {
-								return BattleBotArena.LEFT;
-							}
-							else if (deadPos[0] - 39 < bulletPos[0]) {
+							System.out.println("Dead bot detected on the left or right");
+							if (deadPos[0] + 39 > bulletPos[0] && deadPos[0] < botPos[0]) {
 								return BattleBotArena.RIGHT;
+							} else if (deadPos[0] - 39 < bulletPos[0] && deadPos[0] > botPos[0]) {
+								return BattleBotArena.LEFT;
 							}
 						}
 					}
-					if (botPos[0] > 500) {
+					if (bulletPos[0] < 26) {
+						return BattleBotArena.RIGHT;
+					} else if (bulletPos[0] > 974) {
+						return BattleBotArena.LEFT;
+					} else if (bulletPos[0] > botPos[0]) {
 						return BattleBotArena.LEFT;
 					} else {
 						return BattleBotArena.RIGHT;
@@ -94,15 +98,19 @@ public class CCCQBot extends Bot {
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
 						if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
-							if (deadPos[1] + 39 >  bulletPos[1]) {
-								return BattleBotArena.UP;
-							}
-							else if (deadPos[1] - 39 < bulletPos[1]) {
+							System.out.println("Dead bot detected above or below");
+							if (deadPos[1] + 39 > bulletPos[1] && deadPos[1] < botPos[1]) {
 								return BattleBotArena.DOWN;
+							} else if (deadPos[1] - 39 < bulletPos[1] && deadPos[1] > botPos[1]) {
+								return BattleBotArena.UP;
 							}
 						}
 					}
-					if (botPos[1] > 355) {
+					if (bulletPos[1] < 36) {
+						return BattleBotArena.DOWN;
+					} else if (bulletPos[1] > 674) {
+						return BattleBotArena.UP;
+					} else if (bulletPos[1] > botPos[1]) {
 						return BattleBotArena.UP;
 					} else {
 						return BattleBotArena.DOWN;
