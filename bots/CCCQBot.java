@@ -71,6 +71,17 @@ public class CCCQBot extends Bot {
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
 				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
+					for (BotInfo deadBot: deadBots){
+						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
+						if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
+							if (deadPos[0] + 39 >  bulletPos[0]) {
+								return BattleBotArena.LEFT;
+							}
+							else if (deadPos[0] - 39 < bulletPos[0]) {
+								return BattleBotArena.RIGHT;
+							}
+						}
+					}
 					if (botPos[0] > 500) {
 						return BattleBotArena.LEFT;
 					} else {
@@ -80,6 +91,17 @@ public class CCCQBot extends Bot {
 			} else if (bulletPos[1] > botPos[1] - 13 && bulletPos[1] < botPos[1] + 13 && speed[0] != 0) { //detect bullet left or right of bot
 				// System.out.println("Bullet detected from left or right");
 				if (bulletTowards(botPos[0], bulletPos[0], speed[0])) { //dodge incoming bullet
+					for (BotInfo deadBot: deadBots){
+						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
+						if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
+							if (deadPos[1] + 39 >  bulletPos[1]) {
+								return BattleBotArena.UP;
+							}
+							else if (deadPos[1] - 39 < bulletPos[1]) {
+								return BattleBotArena.DOWN;
+							}
+						}
+					}
 					if (botPos[1] > 355) {
 						return BattleBotArena.UP;
 					} else {

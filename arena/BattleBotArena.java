@@ -631,12 +631,12 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 		// *** HUMAN TEST BOT CREATION
 		// *** Commenat the next two lines out if you don't want to use the
 		// *** HumanBot (under user control)
-		// bots[0] = new HumanBot();
-		// addKeyListener((HumanBot)bots[0]);
+		bots[0] = new HumanBot();
+		addKeyListener((HumanBot)bots[0]);
 		// ******************************
 
 		// bots[1] = new AhmedBot();
-		bots[0] = new CCCQBot();
+		bots[1] = new CCCQBot();
 		// bots[3] = new IsmailBot();
 		// bots[4] = new SaremBot();
 		// bots[5] = new JohnathanBot();
