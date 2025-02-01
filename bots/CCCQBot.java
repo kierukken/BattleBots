@@ -9,7 +9,9 @@ import arena.Bullet;
 
 public class CCCQBot extends Bot {
 	Image picture;
-
+	boolean bulletTowards(double mePos, double bulletPos, double bulletSpeed) {
+		return ((bulletPos < mePos) && (bulletPos + 5 * bulletSpeed < mePos -13)) || ((bulletPos > mePos) && (bulletPos + 5*bulletSpeed < mePos + 13))
+	}
     /**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
 	 * square with height and width equal to RADIUS * 2.
@@ -69,7 +71,7 @@ public class CCCQBot extends Bot {
 			System.out.println("Bullet at (" + coord[0] + "," + coord[1] + ") moving at (" + speed[0] + "," + speed[1] + ")");
 			if (coord[0] > pos[0] - 13 && coord[0] < pos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
 				System.out.println("Bullet detected from above or below");
-				if ((coord[1] < pos[1] && coord[1] + 5 * speed[1] > pos[1] - 13) || (coord[1] > pos[1] && coord[1] + 5 * speed[1] < pos[1] + 13)) { //dodge incoming bullet
+				if bulletTowards(pos[1], coord[1], speed[1]) { //dodge incoming bullet
 					System.out.println("Dodge bullet from above or below, x speed: " + speed[0] + " and y speed: " + speed[1]);
 					if (pos[0] > 500) {
 						return BattleBotArena.LEFT;
@@ -79,7 +81,7 @@ public class CCCQBot extends Bot {
 				}
 			} else if (coord[1] > pos[1] - 13 && speed[0] != 0 && coord[1] < pos[0] + 13) { //detect bullet left or right of bot
 				System.out.println("Bullet detected from left or right");
-				if ((coord[0] < pos[0] && coord[0] + 5 * speed[0] > pos[0] - 13) || (coord[0] > pos[0] && coord[0] + 5 * speed[0] < pos[0] + 13)) { //dodge incoming bullet
+				if bulletTowards(pos[0], coord[0], speed[0]) { //dodge incoming bullet
 					System.out.println("Dodge bullet from left or right, x speed: " + speed[0] + " and y speed: " + speed[1]);
 					if (pos[1] > 355) {
 						return BattleBotArena.UP;
