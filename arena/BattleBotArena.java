@@ -298,7 +298,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	/**
 	 * Round time, in seconds
 	 */
-	public static final int 	TIME_LIMIT = 90;//ROWBOTTOM - Need this much time to encourage looting
+	public static final int 	TIME_LIMIT = 1000;//ROWBOTTOM - Need this much time to encourage looting
 	/**
 	 * TIME_LIMIT / SECS_PER_MSG = Number of messages allowed per round
 	 */
@@ -311,7 +311,7 @@ public class BattleBotArena extends JPanel implements MouseListener, MouseWheelL
 	 * Total number of Bots in round 1 (if you have fewer than this, the rest of the spots
 	 * in the array will be filled with Drones, RandBots, and Sentries).
 	 */
-	public static final int 	NUM_BOTS = 30;//BROOKS NOV 12 2017 Changed to 16
+	public static final int 	NUM_BOTS = 3;//BROOKS NOV 12 2017 Changed to 16
 	/**
 	 * Number of bullets on screen at once for each bot
 	 */

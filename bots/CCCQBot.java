@@ -13,6 +13,32 @@ public class CCCQBot extends Bot {
 	boolean bulletTowards(double mePos, double bulletPos, double bulletSpeed) {
 		return ((bulletPos < mePos) && (bulletPos + 10 * bulletSpeed > mePos - 13)) || ((bulletPos > mePos) && (bulletPos + 10 * bulletSpeed < mePos + 13));
 	}
+
+	boolean deadBotInBetween(double botPos, double targetPos, BotInfo[] deadBots, boolean isHorizontal) {
+		for (BotInfo deadBot: deadBots) {
+			double deadPosX = deadBot.getX() + 13;
+			double deadPosY = deadBot.getY() + 13;
+			if (isHorizontal) {
+				if (deadPosY > botPos - 13 && deadPosY < botPos + 13) {
+					if (deadPosX > botPos && deadPosX < targetPos) {
+						return true;
+					} else if (deadPosX < botPos && deadPosX > targetPos) {
+						return true;
+					}
+				}
+			} else {
+				if (deadPosX > botPos - 13 && deadPosX < botPos + 13) {
+					if (deadPosY > botPos && deadPosY < targetPos) {
+						return true;
+					} else if (deadPosY < botPos && deadPosY > targetPos) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	} 
+
     /**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
 	 * square with height and width equal to RADIUS * 2.
@@ -72,7 +98,7 @@ public class CCCQBot extends Bot {
 			double[] bulletPos = {bullet.getX(), bullet.getY()};
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
-				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
+				if (bulletTowards(botPos[1], bulletPos[1], speed[1]) && !deadBotInBetween(botPos[1], bulletPos[1], deadBots, false)) { //dodge incoming bullet
 					for (BotInfo deadBot: deadBots){ //avoid dead bots
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
 						if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
