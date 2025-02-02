@@ -2,6 +2,7 @@ package bots;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.Arrays;
 
 import arena.BattleBotArena;
 import arena.BotInfo;
@@ -96,9 +97,10 @@ public class CCCQBot extends Bot {
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
 				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
 					boolean bulletBlockedByBot = false;
-					for (BotInfo deadBot: deadBots){ //avoid dead bots
+					for (BotInfo deadBot: deadBots) {
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
-						if (!deadBotInBetween(botPos[1], bulletPos[1], deadPos[0],deadPos[1], false)){
+						System.out.println("Dead bot at " + Arrays.toString(deadPos));
+						if (!deadBotInBetween(bulletPos[0], botPos[0], deadPos[0],deadPos[1], false)) {
 							if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
 								if (deadPos[0] + 39 > bulletPos[0] && deadPos[0] < botPos[0]) {
 									return BattleBotArena.RIGHT;
@@ -107,6 +109,7 @@ public class CCCQBot extends Bot {
 								}
 							}
 						} else {
+							System.out.println("Dead bot in between");
 							bulletBlockedByBot = true;
 							break;
 						}
@@ -126,9 +129,10 @@ public class CCCQBot extends Bot {
 			} else if (bulletPos[1] > botPos[1] - 13 && bulletPos[1] < botPos[1] + 13 && speed[0] != 0) { //detect bullet left or right of bot
 				if (bulletTowards(botPos[0], bulletPos[0], speed[0])) { //dodge incoming bullet
 					boolean bulletBlockedByBot = false;
-					for (BotInfo deadBot: deadBots){
+					for (BotInfo deadBot: deadBots) {
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
-						if (!deadBotInBetween(botPos[0], bulletPos[0], deadPos[0], deadPos[1], true)) {
+						System.out.println("Dead bot at " + Arrays.toString(deadPos));
+						if (!deadBotInBetween(bulletPos[1], botPos[1], deadPos[0], deadPos[1], true)) {
 							if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
 								if (deadPos[1] + 39 > bulletPos[1] && deadPos[1] < botPos[1]) {
 									return BattleBotArena.DOWN;
@@ -136,6 +140,10 @@ public class CCCQBot extends Bot {
 									return BattleBotArena.UP;
 								}
 							}
+						} else {
+							System.out.println("Dead bot in between");
+							bulletBlockedByBot = true;
+							break;
 						}
 					}
 					if (!bulletBlockedByBot) {
