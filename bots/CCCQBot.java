@@ -13,21 +13,21 @@ public class CCCQBot extends Bot {
 	boolean bulletTowards(double mePos, double bulletPos, double bulletSpeed) {
 		return ((bulletPos < mePos) && (bulletPos + 10 * bulletSpeed > mePos - 13)) || ((bulletPos > mePos) && (bulletPos + 10 * bulletSpeed < mePos + 13));
 	}
-
-	boolean deadBotInBetween(double botPos, double targetPos, double deadPosX, double deadPosY, boolean isHorizontal) {
+	//method to check if there is a dead bot to block a bullet
+	boolean deadBotInBetween(double sourcePos, double targetPos, double deadPosX, double deadPosY, boolean isHorizontal) {
 		if (isHorizontal) {
-			if (deadPosY > botPos - 13 && deadPosY < botPos + 13) {
-				if (deadPosX > botPos && deadPosX < targetPos) {
+			if (sourcePos > deadPosY - 13 && sourcePos < deadPosY + 13) {
+				if (deadPosX > sourcePos && deadPosX < targetPos) {
 					return true;
-				} else if (deadPosX < botPos && deadPosX > targetPos) {
+				} else if (deadPosX < sourcePos && deadPosX > targetPos) {
 					return true;
 				}
 			}
 		} else {
-			if (deadPosX > botPos - 13 && deadPosX < botPos + 13) {
-				if (deadPosY > botPos && deadPosY < targetPos) {
+			if (sourcePos > deadPosX - 13 && sourcePos < deadPosX + 13) {
+				if (deadPosY > sourcePos && deadPosY < targetPos) {
 					return true;
-				} else if (deadPosY < botPos && deadPosY > targetPos) {
+				} else if (deadPosY < sourcePos && deadPosY > targetPos) {
 					return true;
 				}
 			}
@@ -118,7 +118,6 @@ public class CCCQBot extends Bot {
 					}
 				}
 			} else if (bulletPos[1] > botPos[1] - 13 && bulletPos[1] < botPos[1] + 13 && speed[0] != 0) { //detect bullet left or right of bot
-				// System.out.println("Bullet detected from left or right");
 				if (bulletTowards(botPos[0], bulletPos[0], speed[0])) { //dodge incoming bullet
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
