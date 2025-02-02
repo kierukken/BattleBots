@@ -66,6 +66,7 @@ public class CCCQBot extends Bot {
 	 */
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
 		double[] botPos = {me.getX() + 13, me.getY() + 13};
+		//defense
 		for (Bullet bullet: bullets) {
 			double[] bulletPos = {bullet.getX(), bullet.getY()};
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
@@ -74,7 +75,6 @@ public class CCCQBot extends Bot {
 					for (BotInfo deadBot: deadBots){ //avoid dead bots
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
 						if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
-							System.out.println("Dead bot detected on the left or right");
 							if (deadPos[0] + 39 > bulletPos[0] && deadPos[0] < botPos[0]) {
 								return BattleBotArena.RIGHT;
 							} else if (deadPos[0] - 39 < bulletPos[0] && deadPos[0] > botPos[0]) {
@@ -98,7 +98,6 @@ public class CCCQBot extends Bot {
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
 						if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
-							System.out.println("Dead bot detected above or below");
 							if (deadPos[1] + 39 > bulletPos[1] && deadPos[1] < botPos[1]) {
 								return BattleBotArena.DOWN;
 							} else if (deadPos[1] - 39 < bulletPos[1] && deadPos[1] > botPos[1]) {
@@ -114,6 +113,25 @@ public class CCCQBot extends Bot {
 						return BattleBotArena.UP;
 					} else {
 						return BattleBotArena.DOWN;
+					}
+				}
+			}
+		}
+		//offense
+		for (BotInfo liveBot: liveBots) {
+			double[] livePos = {liveBot.getX() + 13, liveBot.getY() + 13};
+			if (liveBot.isOverheated()) { //check overheated live bot
+				if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check if overheated bot is above or below
+					if (livePos[1] > botPos[1]) {
+						return BattleBotArena.FIREDOWN;
+					} else {
+						return BattleBotArena.FIREUP;
+					}
+				} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check if overheated bot is on the left or right
+					if (livePos[0] > botPos[0]) {
+						return BattleBotArena.FIRELEFT;
+					} else {
+						return BattleBotArena.FIRERIGHT;
 					}
 				}
 			}
