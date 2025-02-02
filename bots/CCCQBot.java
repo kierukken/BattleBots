@@ -122,11 +122,13 @@ public class CCCQBot extends Bot {
 				if (bulletTowards(botPos[0], bulletPos[0], speed[0])) { //dodge incoming bullet
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
-						if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
-							if (deadPos[1] + 39 > bulletPos[1] && deadPos[1] < botPos[1]) {
-								return BattleBotArena.DOWN;
-							} else if (deadPos[1] - 39 < bulletPos[1] && deadPos[1] > botPos[1]) {
-								return BattleBotArena.UP;
+						if (!deadBotInBetween(botPos[0], bulletPos[0], deadPos[0], deadPos[1], true)) {
+							if (botPos[0] + 13 > deadPos[0] - 13 && botPos[0] - 13 < deadPos[0] + 13) {
+								if (deadPos[1] + 39 > bulletPos[1] && deadPos[1] < botPos[1]) {
+									return BattleBotArena.DOWN;
+								} else if (deadPos[1] - 39 < bulletPos[1] && deadPos[1] > botPos[1]) {
+									return BattleBotArena.UP;
+								}
 							}
 						}
 					}
