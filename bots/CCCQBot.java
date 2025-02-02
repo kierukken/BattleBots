@@ -14,25 +14,21 @@ public class CCCQBot extends Bot {
 		return ((bulletPos < mePos) && (bulletPos + 10 * bulletSpeed > mePos - 13)) || ((bulletPos > mePos) && (bulletPos + 10 * bulletSpeed < mePos + 13));
 	}
 
-	boolean deadBotInBetween(double botPos, double targetPos, BotInfo[] deadBots, boolean isHorizontal) {
-		for (BotInfo deadBot: deadBots) {
-			double deadPosX = deadBot.getX() + 13;
-			double deadPosY = deadBot.getY() + 13;
-			if (isHorizontal) {
-				if (deadPosY > botPos - 13 && deadPosY < botPos + 13) {
-					if (deadPosX > botPos && deadPosX < targetPos) {
-						return true;
-					} else if (deadPosX < botPos && deadPosX > targetPos) {
-						return true;
-					}
+	boolean deadBotInBetween(double botPos, double targetPos, double deadPosX, double deadPosY, boolean isHorizontal) {
+		if (isHorizontal) {
+			if (deadPosY > botPos - 13 && deadPosY < botPos + 13) {
+				if (deadPosX > botPos && deadPosX < targetPos) {
+					return true;
+				} else if (deadPosX < botPos && deadPosX > targetPos) {
+					return true;
 				}
-			} else {
-				if (deadPosX > botPos - 13 && deadPosX < botPos + 13) {
-					if (deadPosY > botPos && deadPosY < targetPos) {
-						return true;
-					} else if (deadPosY < botPos && deadPosY > targetPos) {
-						return true;
-					}
+			}
+		} else {
+			if (deadPosX > botPos - 13 && deadPosX < botPos + 13) {
+				if (deadPosY > botPos && deadPosY < targetPos) {
+					return true;
+				} else if (deadPosY < botPos && deadPosY > targetPos) {
+					return true;
 				}
 			}
 		}
@@ -98,16 +94,18 @@ public class CCCQBot extends Bot {
 			double[] bulletPos = {bullet.getX(), bullet.getY()};
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
-				if (bulletTowards(botPos[1], bulletPos[1], speed[1]) && !deadBotInBetween(botPos[1], bulletPos[1], deadBots, false)) { //dodge incoming bullet
+				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
 					for (BotInfo deadBot: deadBots){ //avoid dead bots
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
-						if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
-							if (deadPos[0] + 39 > bulletPos[0] && deadPos[0] < botPos[0]) {
-								return BattleBotArena.RIGHT;
-							} else if (deadPos[0] - 39 < bulletPos[0] && deadPos[0] > botPos[0]) {
-								return BattleBotArena.LEFT;
+						if (!deadBotInBetween(botPos[1], bulletPos[1], deadPos[0],deadPos[1], false)){
+							if (botPos[1] + 13 > deadPos[1] - 13 && botPos[1] - 13 < deadPos[1] + 13) {
+								if (deadPos[0] + 39 > bulletPos[0] && deadPos[0] < botPos[0]) {
+									return BattleBotArena.RIGHT;
+								} else if (deadPos[0] - 39 < bulletPos[0] && deadPos[0] > botPos[0]) {
+									return BattleBotArena.LEFT;
+								}
 							}
-						}
+						}	
 					}
 					if (bulletPos[0] < 26) {
 						return BattleBotArena.RIGHT;
