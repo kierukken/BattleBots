@@ -111,7 +111,7 @@ public class CCCQBot extends Bot {
 							break;
 						}
 					}
-					if (bulletBlockedByBot) {
+					if (!bulletBlockedByBot) {
 						if (bulletPos[0] < 26) {
 							return BattleBotArena.RIGHT;
 						} else if (bulletPos[0] > 974) {
@@ -138,7 +138,7 @@ public class CCCQBot extends Bot {
 							}
 						}
 					}
-					if (bulletBlockedByBot) {
+					if (!bulletBlockedByBot) {
 						if (bulletPos[1] < 36) {
 							return BattleBotArena.DOWN;
 						} else if (bulletPos[1] > 674) {
@@ -171,7 +171,7 @@ public class CCCQBot extends Bot {
 				} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check live bot on the left or right
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
-						if (deadBotInBetween(botPos[1], livePos[1], deadPos[0], deadPos[1], false)){
+						if (deadBotInBetween(botPos[1], livePos[1], deadPos[0], deadPos[1], true)){
 							if (livePos[0] > botPos[0] && livePos[0] - botPos[0] < 56) { //cehck live bot in range on the right
 								return BattleBotArena.FIRERIGHT;
 							} else if (livePos[0] < botPos[0] && botPos[0] - livePos[0] < 56) { //check live bot in range on the left
