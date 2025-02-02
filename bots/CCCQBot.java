@@ -95,6 +95,7 @@ public class CCCQBot extends Bot {
 			double[] speed = {bullet.getXSpeed(), bullet.getYSpeed()};
 			if (bulletPos[0] > botPos[0] - 13 && bulletPos[0] < botPos[0] + 13 && speed[1] != 0) { //detect bullet above or below bot
 				if (bulletTowards(botPos[1], bulletPos[1], speed[1])) { //dodge incoming bullet
+					boolean bulletBlockedByBot = false;
 					for (BotInfo deadBot: deadBots){ //avoid dead bots
 						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
 						if (!deadBotInBetween(botPos[1], bulletPos[1], deadPos[0],deadPos[1], false)){
@@ -105,20 +106,26 @@ public class CCCQBot extends Bot {
 									return BattleBotArena.LEFT;
 								}
 							}
-						}	
+						} else {
+							bulletBlockedByBot = true;
+							break;
+						}
 					}
-					if (bulletPos[0] < 26) {
-						return BattleBotArena.RIGHT;
-					} else if (bulletPos[0] > 974) {
-						return BattleBotArena.LEFT;
-					} else if (bulletPos[0] > botPos[0]) {
-						return BattleBotArena.LEFT;
-					} else {
-						return BattleBotArena.RIGHT;
+					if (bulletBlockedByBot) {
+						if (bulletPos[0] < 26) {
+							return BattleBotArena.RIGHT;
+						} else if (bulletPos[0] > 974) {
+							return BattleBotArena.LEFT;
+						} else if (bulletPos[0] > botPos[0]) {
+							return BattleBotArena.LEFT;
+						} else {
+							return BattleBotArena.RIGHT;
+						}
 					}
 				}
 			} else if (bulletPos[1] > botPos[1] - 13 && bulletPos[1] < botPos[1] + 13 && speed[0] != 0) { //detect bullet left or right of bot
 				if (bulletTowards(botPos[0], bulletPos[0], speed[0])) { //dodge incoming bullet
+					boolean bulletBlockedByBot = false;
 					for (BotInfo deadBot: deadBots){
 						double[] deadPos = {deadBot.getX()+13, deadBot.getY()+13};
 						if (!deadBotInBetween(botPos[0], bulletPos[0], deadPos[0], deadPos[1], true)) {
@@ -131,14 +138,16 @@ public class CCCQBot extends Bot {
 							}
 						}
 					}
-					if (bulletPos[1] < 36) {
-						return BattleBotArena.DOWN;
-					} else if (bulletPos[1] > 674) {
-						return BattleBotArena.UP;
-					} else if (bulletPos[1] > botPos[1]) {
-						return BattleBotArena.UP;
-					} else {
-						return BattleBotArena.DOWN;
+					if (bulletBlockedByBot) {
+						if (bulletPos[1] < 36) {
+							return BattleBotArena.DOWN;
+						} else if (bulletPos[1] > 674) {
+							return BattleBotArena.UP;
+						} else if (bulletPos[1] > botPos[1]) {
+							return BattleBotArena.UP;
+						} else {
+							return BattleBotArena.DOWN;
+						}
 					}
 				}
 			}
@@ -149,16 +158,26 @@ public class CCCQBot extends Bot {
 				double[] livePos = {liveBot.getX() + 13, liveBot.getY() + 13};
 				//the following code is used to check live bots that are lined up and close enough to guarantee hit
 				if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check live bot above or below
-					if (livePos[1] > botPos[1] && livePos[1] - botPos[1] < 56) { //check live bot in range below
-						return BattleBotArena.FIREDOWN;
-					} else if (livePos[1] < botPos[1] && botPos[1] - livePos[1] < 56) { //check live bot in range above
-						return BattleBotArena.FIREUP;
+					for (BotInfo deadBot: deadBots){
+						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
+						if (deadBotInBetween(botPos[1], livePos[1], deadPos[0], deadPos[1], false)){
+							if (livePos[1] > botPos[1] && livePos[1] - botPos[1] < 56) { //check live bot in range below
+								return BattleBotArena.FIREDOWN;
+							} else if (livePos[1] < botPos[1] && botPos[1] - livePos[1] < 56) { //check live bot in range above
+								return BattleBotArena.FIREUP;
+							}
+						}
 					}
 				} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check live bot on the left or right
-					if (livePos[0] > botPos[0] && livePos[0] - botPos[0] < 56) { //cehck live bot in range on the right
-						return BattleBotArena.FIRERIGHT;
-					} else if (livePos[0] < botPos[0] && botPos[0] - livePos[0] < 56) { //check live bot in range on the left
-						return BattleBotArena.FIRELEFT;
+					for (BotInfo deadBot: deadBots){
+						double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
+						if (deadBotInBetween(botPos[1], livePos[1], deadPos[0], deadPos[1], false)){
+							if (livePos[0] > botPos[0] && livePos[0] - botPos[0] < 56) { //cehck live bot in range on the right
+								return BattleBotArena.FIRERIGHT;
+							} else if (livePos[0] < botPos[0] && botPos[0] - livePos[0] < 56) { //check live bot in range on the left
+								return BattleBotArena.FIRELEFT;
+							}
+						}
 					}
 				}
 				if (liveBot.isOverheated()) { //check overheated live bot
