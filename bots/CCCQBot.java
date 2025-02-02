@@ -65,7 +65,8 @@ public class CCCQBot extends Bot {
 	 * @return			A legal move (use the constants defined in BattleBotArena)
 	 */
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
-		double[] botPos = {me.getX() + 13, me.getY() + 13};
+		double[] botPos = {me.getX() + 13, me.getY() + 13}; //coordinates of me
+		double[] nearestOverheated = null; //coordinates of the nearest overheated bot
 		//defense
 		for (Bullet bullet: bullets) {
 			double[] bulletPos = {bullet.getX(), bullet.getY()};
@@ -118,20 +119,42 @@ public class CCCQBot extends Bot {
 			}
 		}
 		//offense
-		for (BotInfo liveBot: liveBots) {
-			double[] livePos = {liveBot.getX() + 13, liveBot.getY() + 13};
-			if (liveBot.isOverheated()) { //check overheated live bot
-				if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check if overheated bot is above or below
-					if (livePos[1] > botPos[1]) {
+		if (shotOK) {
+			for (BotInfo liveBot: liveBots) {
+				double[] livePos = {liveBot.getX() + 13, liveBot.getY() + 13};
+				//the following code is used to check live bots that are lined up and close enough to guarantee hit
+				if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check live bot above or below
+					if (livePos[1] > botPos[1] && livePos[1] - botPos[1] < 56) { //check live bot in range below
 						return BattleBotArena.FIREDOWN;
-					} else {
+					} else if (livePos[1] < botPos[1] && botPos[1] - livePos[1] < 56) { //check live bot in range above
 						return BattleBotArena.FIREUP;
 					}
-				} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check if overheated bot is on the left or right
-					if (livePos[0] > botPos[0]) {
-						return BattleBotArena.FIRELEFT;
-					} else {
+				} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check live bot on the left or right
+					if (livePos[0] > botPos[0] && livePos[0] - botPos[0] < 56) { //cehck live bot in range on the right
 						return BattleBotArena.FIRERIGHT;
+					} else if (livePos[0] < botPos[0] && botPos[0] - livePos[0] < 56) { //check live bot in range on the left
+						return BattleBotArena.FIRELEFT;
+					}
+				}
+				if (liveBot.isOverheated()) { //check overheated live bot
+					if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check if overheated bot is above or below
+						if (livePos[1] > botPos[1]) { //overheated bot is below
+							return BattleBotArena.FIREDOWN;
+						} else { //above
+							return BattleBotArena.FIREUP;
+						}
+					} else if (livePos[1] > botPos[1] - 13 && livePos[1] < botPos[1] + 13) { //check if overheated bot is on the left or right
+						if (livePos[0] > botPos[0]) { //overheated bot is on the right
+							return BattleBotArena.FIRERIGHT;
+						} else { //left
+							return BattleBotArena.FIRELEFT;
+						}
+					} else { //update the location of the nearest overheated bot if needed
+						if (nearestOverheated != null) { //there is no other overheated bot
+							nearestOverheated = livePos;
+						} else { //there is already an overheated bot
+							//code here to check if this one is closer
+						}
 					}
 				}
 			}
