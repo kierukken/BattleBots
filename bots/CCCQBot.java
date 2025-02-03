@@ -34,7 +34,7 @@ public class CCCQBot extends Bot {
 			}
 		}
 		return false;
-	} 
+	}
 
     /**
 	 * The radius of a Bot. Each Bot should fit into a circle inscribed into a
@@ -89,7 +89,7 @@ public class CCCQBot extends Bot {
 	 */
 	public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
 		double[] botPos = {me.getX() + 13, me.getY() + 13}; //coordinates of me
-		double[] nearestOverheated = null; //coordinates of the nearest overheated bot
+		double[] nearestDisabled = null; //coordinates of the nearest overheated bot or out of ammo bot
 		//defense
 		for (Bullet bullet: bullets) {
 			double[] bulletPos = {bullet.getX(), bullet.getY()};
@@ -184,7 +184,7 @@ public class CCCQBot extends Bot {
 						}
 					}
 				}
-				if (liveBot.isOverheated()) { //check overheated live bot
+				if (liveBot.isOverheated() || liveBot.getBulletsLeft() == 0) { //check overheated or out of ammo live bot
 					if (livePos[0] > botPos[0] - 13 && livePos[0] < botPos[0] + 13) { //check if overheated bot is above or below
 						if (livePos[1] > botPos[1]) { //overheated bot is below
 							return BattleBotArena.FIREDOWN;
@@ -198,11 +198,69 @@ public class CCCQBot extends Bot {
 							return BattleBotArena.FIRELEFT;
 						}
 					} else { //update the location of the nearest overheated bot if needed
-						if (nearestOverheated != null) { //there is no other overheated bot
-							nearestOverheated = livePos;
+						if (nearestDisabled == null) { //there is no other overheated bot
+							nearestDisabled = livePos;
 						} else { //there is already an overheated bot
-							//code here to check if this one is closer
+							if (Math.min(Math.abs(botPos[0] - livePos[0]), Math.abs(botPos[1] - livePos[1])) < Math.min(Math.abs(botPos[0] - nearestDisabled[0]), Math.abs(botPos[1] - nearestDisabled[1]))) {
+								nearestDisabled = livePos;
+							}
 						}
+					}
+				}
+			}
+			if (nearestDisabled != null) { //move towards the nearest overheated bot
+				//check for dead bots blocking the path to overheated bot
+				for (BotInfo deadBot: deadBots) {
+					double[] deadPos = {deadBot.getX() + 13, deadBot.getY() + 13};
+					//check for dead bots blocking above or below overheated bot
+					if (botPos[0] < nearestDisabled[0]) { //overheated bot is to the right
+						if (deadBotInBetween(nearestDisabled[0] - 13, botPos[1], nearestDisabled[1], deadPos[0], deadPos[1], false)) { //dead bot blocking vertical path
+							if (botPos[1] < nearestDisabled[1]) { //overheated bot is to the bottom
+								return BattleBotArena.DOWN;
+							} else { //top
+								return BattleBotArena.UP;
+							}
+						}
+					} else { //left
+						if (deadBotInBetween(nearestDisabled[0] + 13, botPos[1], nearestDisabled[1], deadPos[0], deadPos[1], false)) { //dead bot blocking vertical path
+							if (botPos[1] < nearestDisabled[1]) { //overheated bot is to the bottom
+								return BattleBotArena.DOWN;
+							} else { //top
+								return BattleBotArena.UP;
+							}
+						}
+					}
+					//check for dead bots blocking left or right of overheated bot
+					if (botPos[1] < nearestDisabled[1]) { //overheated bot is to the bottom
+						if (deadBotInBetween(botPos[0], nearestDisabled[1] - 13, nearestDisabled[0], deadPos[0], deadPos[1], true)) { //dead bot blocking vertical path
+							if (botPos[0] < nearestDisabled[0]) { //overheated bot is to the right
+								return BattleBotArena.RIGHT;
+							} else { //left
+								return BattleBotArena.LEFT;
+							}
+						}
+					} else { //top
+						if (deadBotInBetween(botPos[0], nearestDisabled[1] + 13, nearestDisabled[0], deadPos[0], deadPos[1], true)) { //dead bot blocking vertical path
+							if (botPos[0] < nearestDisabled[0]) { //overheated bot is to the right
+								return BattleBotArena.RIGHT;
+							} else { //left
+								return BattleBotArena.LEFT;
+							}
+						}
+					}
+				}
+				//take the shorter of horizontal or vertical distance and move towards overheated
+				if (Math.abs(botPos[0] - nearestDisabled[0]) < Math.abs(botPos[1] - nearestDisabled[1])) { //horizontal distance is shorter
+					if (botPos[0] < nearestDisabled[0]) { //overheated bot is on the right
+						return BattleBotArena.RIGHT;
+					} else { //left
+						return BattleBotArena.LEFT;
+					}
+				} else { //vertical distance is shorter
+					if (botPos[1] < nearestDisabled[1]) { //overheated bot is below
+						return BattleBotArena.DOWN;
+					} else { //above
+						return BattleBotArena.UP;
 					}
 				}
 			}
