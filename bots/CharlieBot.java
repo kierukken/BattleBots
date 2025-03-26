@@ -1,11 +1,12 @@
 package bots;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 import arena.*;
 import java.util.Random;
 
-public class CharlieQBot extends Bot{
+public class CharlieQBot extends Bot {
     Image picture;
     private int shootDelay = 0;
 
@@ -13,34 +14,42 @@ public class CharlieQBot extends Bot{
     public void newRound() {
         shootDelay = 0;
     }
-    private boolean deadBotInBetween(double sourcePosX, double sourcePosY, double targetPos, double deadPosX, double deadPosY, boolean isHorizontal) {
-		if (isHorizontal) {
-			if (sourcePosY > deadPosY - 13 && sourcePosY < deadPosY + 13) {
-				if (deadPosX > sourcePosX && deadPosX < targetPos) {
-					return true;
-				} else if (deadPosX < sourcePosX && deadPosX > targetPos) {
-					return true;
-				}
-			}
-		} else {
-			if (sourcePosX > deadPosX - 13 && sourcePosX < deadPosX + 13) {
-				if (deadPosY > sourcePosY && deadPosY < targetPos) {
-					return true;
-				} else if (deadPosY < sourcePosY && deadPosY > targetPos) {
-					return true;
-				}
-			}
-		}   
-		return false;
-	}
-    private int shoot(int direction){
+
+    private boolean deadBotInBetween(double sourcePosX, double sourcePosY, double targetPos, double deadPosX,
+            double deadPosY, boolean isHorizontal) {
+        if (isHorizontal) {
+            if (sourcePosY > deadPosY - 13 && sourcePosY < deadPosY + 13) {
+                if (deadPosX > sourcePosX && deadPosX < targetPos) {
+                    return true;
+                } else if (deadPosX < sourcePosX && deadPosX > targetPos) {
+                    return true;
+                }
+            }
+        } else {
+            if (sourcePosX > deadPosX - 13 && sourcePosX < deadPosX + 13) {
+                if (deadPosY > sourcePosY && deadPosY < targetPos) {
+                    return true;
+                } else if (deadPosY < sourcePosY && deadPosY > targetPos) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private int shoot(int direction) {
         shootDelay = 10;
-        if (direction == 0) return BattleBotArena.FIREDOWN;
-        if (direction == 1) return BattleBotArena.FIRELEFT;
-        if (direction == 2) return BattleBotArena.FIREUP;
-        if (direction == 3) return BattleBotArena.FIRERIGHT;
+        if (direction == 0)
+            return BattleBotArena.FIREDOWN;
+        if (direction == 1)
+            return BattleBotArena.FIRELEFT;
+        if (direction == 2)
+            return BattleBotArena.FIREUP;
+        if (direction == 3)
+            return BattleBotArena.FIRERIGHT;
         return BattleBotArena.STAY;
     }
+
     @Override
     public int getMove(BotInfo me, boolean shotOK, BotInfo[] liveBots, BotInfo[] deadBots, Bullet[] bullets) {
         shootDelay--;
@@ -56,26 +65,36 @@ public class CharlieQBot extends Bot{
         int closestBotLastMove;
         BotInfo closestOverheated = null;
 
-        double distance = 1221.0;
-        double overHeatDistance = 1221.0;
-        for (BotInfo bot: liveBots){
+        double distance = 10000.0;
+        double overHeatDistance = 10000.0;
+        for (BotInfo bot : liveBots) {
             double botX = bot.getX() + Bot.RADIUS;
             double botY = bot.getY() + Bot.RADIUS;
-            if (botX > myX -13 && botX < myX + 13|| botY > myY - 13 && botY < myY + 13){
+            if (botX > myX - 13 && botX < myX + 13 || botY > myY - 13 && botY < myY + 13) {
                 botsInLine.add(bot);
             }
-            if (bot.isOverheated()){
+            if (bot.isOverheated() || bot.getName().equals("Human")) {
                 overHeatedBots.add(bot);
-                if (overHeatDistance > Math.sqrt(Math.pow(botX-myX, 2) + Math.pow(botY-myY, 2))){
-                    overHeatDistance = Math.sqrt(Math.pow(botX-myX, 2) + Math.pow(botY-myY, 2));
+                if (overHeatDistance > Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2))) {
+                    overHeatDistance = Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2));
                     closestOverheated = bot;
                 }
             }
-            if (distance > Math.sqrt(Math.pow(botX-myX, 2) + Math.pow(botY-myY, 2))){
-                if (bot.getName().equals("CharlieQBot"))continue;
-                distance = Math.sqrt(Math.pow(botX-myX, 2) + Math.pow(botY-myY, 2));
+            if (distance > Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2))) {
+                if (bot.getName().equals("Charlie") && liveBots.length > 1) continue;
+                distance = Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2));
                 closestBot = bot;
                 closestBotLastMove = bot.getLastMove();
+            }
+        }
+        int closestDeadDistance = 10000;
+        BotInfo closestDeadBot = null;
+        for(BotInfo bot : deadBots){
+            double botX = bot.getX() + Bot.RADIUS;
+            double botY = bot.getY() + Bot.RADIUS;
+            if (closestDeadDistance > Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2)) && bot.getBulletsLeft() > 0) {
+                closestDeadDistance = (int) Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2));
+                closestDeadBot = bot;
             }
         }
 
@@ -83,58 +102,89 @@ public class CharlieQBot extends Bot{
         boolean canMoveLeft = true;
         boolean canMoveUp = true;
         boolean canMoveDown = true;
-        
-        for (Bullet bullet: bullets) {
+
+        for (Bullet bullet : bullets) {
             double bulletX = bullet.getX();
             double bulletY = bullet.getY();
             double xSpeed = bullet.getXSpeed();
             double ySpeed = bullet.getYSpeed();
+            
+            double nextBulletX = bulletX + xSpeed;
+            double nextBulletY = bulletY + ySpeed;
+            
             if (Math.abs((myX + 13) - bulletX) <= 13 && Math.abs(myY - bulletY) <= 13) {
                 if ((bulletX > myX && xSpeed < 0) || (bulletY == myY && Math.abs(ySpeed) > 0)) {
                     canMoveRight = false;
                 }
+            }
+            if (Math.abs((myX + 26) - nextBulletX) <= 13 && Math.abs(myY - nextBulletY) <= 13) {
+                canMoveRight = false;
             }
             if (Math.abs((myX - 13) - bulletX) <= 13 && Math.abs(myY - bulletY) <= 13) {
                 if ((bulletX < myX && xSpeed > 0) || (bulletY == myY && Math.abs(ySpeed) > 0)) {
                     canMoveLeft = false;
                 }
             }
+            if (Math.abs((myX - 26) - nextBulletX) <= 13 && Math.abs(myY - nextBulletY) <= 13) {
+                canMoveLeft = false;
+            }
             if (Math.abs(myX - bulletX) <= 13 && Math.abs((myY - 13) - bulletY) <= 13) {
                 if ((bulletY < myY && ySpeed > 0) || (bulletX == myX && Math.abs(xSpeed) > 0)) {
                     canMoveUp = false;
                 }
+            }
+            if (Math.abs(myX - nextBulletX) <= 13 && Math.abs((myY - 26) - nextBulletY) <= 13) {
+                canMoveUp = false;
             }
             if (Math.abs(myX - bulletX) <= 13 && Math.abs((myY + 13) - bulletY) <= 13) {
                 if ((bulletY > myY && ySpeed < 0) || (bulletX == myX && Math.abs(xSpeed) > 0)) {
                     canMoveDown = false;
                 }
             }
+            if (Math.abs(myX - nextBulletX) <= 13 && Math.abs((myY + 26) - nextBulletY) <= 13) {
+                canMoveDown = false;
+            }
         }
+        
+        ArrayList<Integer> validMoves = new ArrayList<>();
+        if (canMoveRight)
+            validMoves.add(BattleBotArena.RIGHT);
+        if (canMoveLeft)
+            validMoves.add(BattleBotArena.LEFT);
+        if (canMoveUp)
+            validMoves.add(BattleBotArena.UP);
+        if (canMoveDown)
+            validMoves.add(BattleBotArena.DOWN);
 
-        /*defense code*/
-        for (Bullet bullet: bullets){
+        /* defense code */
+        for (Bullet bullet : bullets) {
             double bulletX = bullet.getX();
             double bulletY = bullet.getY();
             double xSpeed = bullet.getXSpeed();
             double ySpeed = bullet.getYSpeed();
-            if (bulletY+13 >= myY && bulletY-13 <= myY){
-                if (Math.abs(bulletX - myX) < 90){
-                    if ((bulletX < myX && xSpeed > 0) ||(bulletX > myX && xSpeed < 0)){
-                        /*emergency shooting code*/
-                        if (shotOK && Math.abs(bulletY-myY)/3 > Math.abs(bulletX-myX)/6){
-                            if (xSpeed < 0) if (shootDelay<=0)return shoot(3);
-                            else if(shootDelay <= 0)return shoot(1);
+            if (bulletY + 13 >= myY && bulletY - 13 <= myY) {
+                if (Math.abs(bulletX - myX) < 90) {
+                    if ((bulletX < myX && xSpeed > 0) || (bulletX > myX && xSpeed < 0)) {
+                        /* emergency shooting code */
+                        if (shotOK && Math.abs(bulletY - myY) / 3 > Math.abs(bulletX - myX) / 6) {
+                            if (xSpeed < 0)
+                                if (shootDelay <= 0)
+                                    return shoot(3);
+                                else if (shootDelay <= 0)
+                                    return shoot(1);
                         }
                         boolean bulletBlocked = false;
                         boolean lesser = false;
                         boolean greater = false;
-                        for(BotInfo deadBot : deadBots) {
+                        for (BotInfo deadBot : deadBots) {
                             double deadX = deadBot.getX() + Bot.RADIUS;
                             double deadY = deadBot.getY() + Bot.RADIUS;
-                            if (Math.abs(deadX - myX) <= 26) {
-                                if (Math.abs(deadY-bulletY) <= 26){
-                                    if (deadY <= myY) lesser = true;
-                                    if (deadY > myY) greater = true;
+                            if (Math.abs(deadX - myX) <= 39) {
+                                if (Math.abs(deadY - bulletY) <= 39) {
+                                    if (deadY <= myY)
+                                        lesser = true;
+                                    if (deadY > myY)
+                                        greater = true;
                                 }
                             }
                             if (deadBotInBetween(myX, myY, bulletX, deadX, deadY, true)) {
@@ -143,44 +193,48 @@ public class CharlieQBot extends Bot{
                             }
                         }
                         if (!bulletBlocked) {
-                            if (bulletY < 78){
+                            if (bulletY < 78 && canMoveDown) {
                                 return BattleBotArena.DOWN;
-                            }
-                            else if (bulletY > 622){
+                            } else if (bulletY > 622 && canMoveUp) {
                                 return BattleBotArena.UP;
                             }
-                            if (bulletY <= myY && !greater){
+                            if (bulletY <= myY && !greater && canMoveDown) {
                                 return BattleBotArena.DOWN;
-                            }
-                            else if (bulletY > myY && !lesser){
+                            } else if (bulletY > myY && !lesser && canMoveUp) {
                                 return BattleBotArena.UP;
-                            }
-                            else{
-                                if (xSpeed < 0)return BattleBotArena.LEFT;
-                                else return BattleBotArena.RIGHT;
+                            } else {
+                                if (xSpeed < 0)
+                                    return BattleBotArena.LEFT;
+                                else
+                                    return BattleBotArena.RIGHT;
                             }
                         }
                     }
                 }
             }
-            if (bulletX+13 >= myX && bulletX-13 <= myX){
-                if (Math.abs(bulletY - myY) < 90){
-                    if ((bulletY < myY && ySpeed > 0) || (bulletY > myY && ySpeed < 0)){
-                        /*emergency shooting code*/
-                        if (shotOK && Math.abs(bulletX-myX)/3 > Math.abs(bulletY-myY)/6){
-                            if (ySpeed < 0) if (shootDelay <= 0)return shoot(0);
-                            else if(shootDelay <= 0)return shoot(2);
+            if (bulletX + 13 >= myX && bulletX - 13 <= myX) {
+                if (Math.abs(bulletY - myY) < 90) {
+                    if ((bulletY < myY && ySpeed > 0) || (bulletY > myY && ySpeed < 0)) {
+                        /* emergency shooting code */
+                        if (shotOK && Math.abs(bulletX - myX) / 3 > Math.abs(bulletY - myY) / 6) {
+                            if (ySpeed < 0)
+                                if (shootDelay <= 0)
+                                    return shoot(0);
+                                else if (shootDelay <= 0)
+                                    return shoot(2);
                         }
                         boolean bulletBlocked = false;
                         boolean lesser = false;
                         boolean greater = false;
-                        for(BotInfo deadBot : deadBots) {
+                        for (BotInfo deadBot : deadBots) {
                             double deadX = deadBot.getX() + Bot.RADIUS;
                             double deadY = deadBot.getY() + Bot.RADIUS;
-                            if (Math.abs(deadY-myY) <= 26){
-                                if (Math.abs(deadX-bulletX) <= 26){
-                                    if (deadX <= myX) lesser = true;
-                                    if (deadX > myX) greater = true;
+                            if (Math.abs(deadY - myY) <= 39) {
+                                if (Math.abs(deadX - bulletX) <= 39) {
+                                    if (deadX <= myX)
+                                        lesser = true;
+                                    if (deadX > myX)
+                                        greater = true;
                                 }
                             }
                             if (deadBotInBetween(myX, myY, bulletY, deadX, deadY, false)) {
@@ -189,72 +243,78 @@ public class CharlieQBot extends Bot{
                             }
                         }
                         if (!bulletBlocked) {
-                            if (bulletX < 78){
+                            if (bulletX < 78 && canMoveRight) {
                                 return BattleBotArena.RIGHT;
-                            }
-                            else if (bulletX > 922){
+                            } else if (bulletX > 922 && canMoveLeft) {
                                 return BattleBotArena.LEFT;
                             }
-                            if (bulletX <= myX && !greater){
+                            if (bulletX <= myX && !greater && canMoveRight) {
                                 return BattleBotArena.RIGHT;
-                            }
-                            else if (bulletX > myX && !lesser){
+                            } else if (bulletX > myX && !lesser && canMoveLeft) {
                                 return BattleBotArena.LEFT;
-                            }
-                            else{
-                                if (ySpeed < 0)return BattleBotArena.UP;
-                                else return BattleBotArena.DOWN;
+                            } else {
+                                if (ySpeed < 0)
+                                    return BattleBotArena.UP;
+                                else
+                                    return BattleBotArena.DOWN;
                             }
                         }
                     }
                 }
             }
         }
-        /*offense code*/
-        for (BotInfo bot: botsInLine){
+        /* offense code */
+        for (BotInfo bot : botsInLine) {
             double botX = bot.getX() + Bot.RADIUS;
             double botY = bot.getY() + Bot.RADIUS;
-            if ((botY > myY - 13 && botY < myY + 13)){
+            if ((botY > myY - 13 && botY < myY + 13)) {
                 boolean blocked = false;
                 for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, botX, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS, true)) {
+                    if (deadBotInBetween(myX, myY, botX, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS,
+                            true)) {
                         blocked = true;
                         continue;
                     }
                 }
-                if (!blocked && Math.abs(myX-botX) < 400) { /*switch back to 60 later*/
-                    if (botX < myX){
-                        if (shotOK && shootDelay <= 0) return shoot(1);
+                if (!blocked && Math.abs(myX - botX) < 80) {
+                    if (botX < myX) {
+                        if (shotOK && shootDelay <= 0)
+                            return shoot(1);
                     } else {
-                        if (shotOK && shootDelay <= 0) return shoot(3);
+                        if (shotOK && shootDelay <= 0)
+                            return shoot(3);
                     }
                 }
-            }
-            else if ((botX > myX - 13 && botX < myX + 13)){
+            } else if ((botX > myX - 13 && botX < myX + 13)) {
                 boolean blocked = false;
                 for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, botY, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS, false)) {
+                    if (deadBotInBetween(myX, myY, botY, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS,
+                            false)) {
                         blocked = true;
                         break;
                     }
                 }
-                if (!blocked && Math.abs(myY-botY) < 400) { /*switch back to 60 later*/
-                    if (botY < myY){
-                        if (shotOK && shootDelay <= 0) return shoot(2);
+                if (!blocked && Math.abs(myY - botY) < 80) {
+                    if (botY < myY) {
+                        if (shotOK && shootDelay <= 0)
+                            return shoot(2);
                     } else {
-                        if (shotOK && shootDelay <= 0) return shoot(0);
+                        if (shotOK && shootDelay <= 0)
+                            return shoot(0);
                     }
                 }
             }
         }
-        /*overheated bot*/
+        /* overheated bot */
+        if (Math.sqrt(Math.pow(closestBot.getX()+Bot.RADIUS- myX, 2) + Math.pow(closestBot.getY()+Bot.RADIUS - myY, 2)) < 50)
         if (closestOverheated != null) {
             double overheatedX = closestOverheated.getX() + Bot.RADIUS;
             double overheatedY = closestOverheated.getY() + Bot.RADIUS;
             if (overheatedY > myY - 13 && overheatedY < myY + 13) {
                 boolean blocked = false;
                 for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, overheatedX, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS, true)) {
+                    if (deadBotInBetween(myX, myY, overheatedX, deadBot.getX() + Bot.RADIUS,
+                            deadBot.getY() + Bot.RADIUS, true)) {
                         blocked = true;
                         break;
                     }
@@ -265,7 +325,8 @@ public class CharlieQBot extends Bot{
             } else if (overheatedX > myX - 13 && overheatedX < myX + 13) {
                 boolean blocked = false;
                 for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, overheatedY, deadBot.getX() + Bot.RADIUS, deadBot.getY() + Bot.RADIUS, false)) {
+                    if (deadBotInBetween(myX, myY, overheatedY, deadBot.getX() + Bot.RADIUS,
+                            deadBot.getY() + Bot.RADIUS, false)) {
                         blocked = true;
                         break;
                     }
@@ -277,36 +338,119 @@ public class CharlieQBot extends Bot{
             double xDist = Math.abs(overheatedX - myX);
             double yDist = Math.abs(overheatedY - myY);
             if (xDist <= yDist) {
-                return (myX < overheatedX) ? BattleBotArena.RIGHT : BattleBotArena.LEFT;
+                if (myX < overheatedX && canMoveRight) {
+                    return BattleBotArena.RIGHT;
+                } else if (myX > overheatedX && canMoveLeft) {
+                    return BattleBotArena.LEFT;
+                } else if (myY < overheatedY && canMoveDown) {
+                    return BattleBotArena.DOWN;
+                } else if (myY > overheatedY && canMoveUp) {
+                    return BattleBotArena.UP;
+                }
             } else {
-                return (myY < overheatedY) ? BattleBotArena.DOWN : BattleBotArena.UP;
+                if (myY < overheatedY && canMoveDown) {
+                    return BattleBotArena.DOWN;
+                } else if (myY > overheatedY && canMoveUp) {
+                    return BattleBotArena.UP;
+                } else if (myX < overheatedX && canMoveRight) {
+                    return BattleBotArena.RIGHT;
+                } else if (myX > overheatedX && canMoveLeft) {
+                    return BattleBotArena.LEFT;
+                }
             }
         }
-
-        /*code to move around*/
-        ArrayList<Integer> validMoves = new ArrayList<>();
-        if (canMoveRight) validMoves.add(BattleBotArena.RIGHT);
-        if (canMoveLeft) validMoves.add(BattleBotArena.LEFT);
-        if (canMoveUp) validMoves.add(BattleBotArena.UP);
-        if (canMoveDown) validMoves.add(BattleBotArena.DOWN);
+        /*Move to target bot */
+        if (closestBot != null && me.getBulletsLeft() > 0) {
+            double closestBotX = closestBot.getX() + Bot.RADIUS;
+            double closestBotY = closestBot.getY() + Bot.RADIUS;
+            if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY)){
+                closestBotX = closestBotX >= 500 ? closestBotX-40:closestBotX+40;
+            }
+            else{
+                closestBotY = closestBotY >= 350 ? closestBotY-40:closestBotY+40; 
+            }
+        
+            if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY-myY)) {
+                if (closestBotX > myX) {
+                    if (canMoveRight) {
+                        return BattleBotArena.RIGHT;
+                    }
+                } 
+                else {
+                    if (canMoveLeft) {
+                        return BattleBotArena.LEFT;
+                    }
+                }
+            }
+            else {
+                if (closestBotY > myY) {
+                    if (canMoveDown) {
+                        return BattleBotArena.DOWN;
+                    }
+                } 
+                else {
+                    if (canMoveUp) {
+                        return BattleBotArena.UP;
+                    }
+                }
+            }
+        }
+        /*Pick up bullet */
+        if (closestDeadBot != null&& me.getBulletsLeft() == 0) {
+            double closestBotX = closestDeadBot.getX() + Bot.RADIUS;
+            double closestBotY = closestDeadBot.getY() + Bot.RADIUS;
+            if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY)){
+                closestBotX = closestBotX >= 500 ? closestBotX-13:closestBotX+13;
+            }
+            else{
+                closestBotY = closestBotY >= 350 ? closestBotY-13:closestBotY+13; 
+            }
+        
+            if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY-myY)) {
+                if (closestBotX > myX) {
+                    if (canMoveRight) {
+                        return BattleBotArena.RIGHT;
+                    }
+                } 
+                else {
+                    if (canMoveLeft) {
+                        return BattleBotArena.LEFT;
+                    }
+                }
+            }
+            else {
+                if (closestBotY > myY) {
+                    if (canMoveDown) {
+                        return BattleBotArena.DOWN;
+                    }
+                } 
+                else {
+                    if (canMoveUp) {
+                        return BattleBotArena.UP;
+                    }
+                }
+            }
+        }
+        /*Move to optimal position */
         if (!validMoves.isEmpty()) {
             int arenaWidth = BattleBotArena.RIGHT_EDGE - BattleBotArena.LEFT_EDGE;
             int arenaHeight = BattleBotArena.BOTTOM_EDGE - BattleBotArena.TOP_EDGE;
-            
-            int optimalX = arenaWidth * 3/5 + BattleBotArena.LEFT_EDGE;
-            int optimalY = arenaHeight * 2/5 + BattleBotArena.TOP_EDGE;
-            
+
+            int optimalX = arenaWidth * 3 / 5 + BattleBotArena.LEFT_EDGE;
+            int optimalY = arenaHeight * 2 / 5 + BattleBotArena.TOP_EDGE;
+
             double dangerFromRight = 1000;
             double dangerFromLeft = 1000;
             double dangerFromUp = 1000;
             double dangerFromDown = 1000;
-            
+
             for (BotInfo bot : liveBots) {
-                if (bot.getName().equals(getName())) continue;
-                
+                if (bot.getName().equals(getName()))
+                    continue;
+
                 double botX = bot.getX() + Bot.RADIUS;
                 double botY = bot.getY() + Bot.RADIUS;
-                
+
                 if (Math.abs(botY - myY) < 50) {
                     if (botX > myX) {
                         dangerFromRight = Math.min(dangerFromRight, botX - myX);
@@ -314,7 +458,7 @@ public class CharlieQBot extends Bot{
                         dangerFromLeft = Math.min(dangerFromLeft, myX - botX);
                     }
                 }
-                
+
                 if (Math.abs(botX - myX) < 50) {
                     if (botY > myY) {
                         dangerFromDown = Math.min(dangerFromDown, botY - myY);
@@ -323,20 +467,24 @@ public class CharlieQBot extends Bot{
                     }
                 }
             }
-            
-            double rightScore = dangerFromRight / 5 - Math.abs(optimalX - (myX + 13)); 
+
+            double rightScore = dangerFromRight / 5 - Math.abs(optimalX - (myX + 13));
             double leftScore = dangerFromLeft / 5 - Math.abs(optimalX - (myX - 13));
             double upScore = dangerFromUp / 5 - Math.abs(optimalY - (myY - 13));
             double downScore = dangerFromDown / 5 - Math.abs(optimalY - (myY + 13));
-            
-            if (myX < BattleBotArena.LEFT_EDGE + 50) leftScore -= 50;
-            if (myX > BattleBotArena.RIGHT_EDGE - 50) rightScore -= 50;
-            if (myY < BattleBotArena.TOP_EDGE + 50) upScore -= 50;
-            if (myY > BattleBotArena.BOTTOM_EDGE - 50) downScore -= 50;
-            
+
+            if (myX < BattleBotArena.LEFT_EDGE + 50)
+                leftScore -= 50;
+            if (myX > BattleBotArena.RIGHT_EDGE - 50)
+                rightScore -= 50;
+            if (myY < BattleBotArena.TOP_EDGE + 50)
+                upScore -= 50;
+            if (myY > BattleBotArena.BOTTOM_EDGE - 50)
+                downScore -= 50;
+
             int bestMove = BattleBotArena.STAY;
             double bestScore = -Double.MAX_VALUE;
-            
+
             if (canMoveRight && validMoves.contains(BattleBotArena.RIGHT) && rightScore > bestScore) {
                 bestScore = rightScore;
                 bestMove = BattleBotArena.RIGHT;
@@ -353,11 +501,11 @@ public class CharlieQBot extends Bot{
                 bestScore = downScore;
                 bestMove = BattleBotArena.DOWN;
             }
-            
+
             if (random.nextInt(5) == 0 && !validMoves.isEmpty()) {
                 return validMoves.get(random.nextInt(validMoves.size()));
             }
-            
+
             return bestMove;
         }
         return BattleBotArena.STAY;
@@ -365,13 +513,12 @@ public class CharlieQBot extends Bot{
 
     @Override
     public void draw(Graphics g, int x, int y) {
-        /*g.drawImage(picture , x, y , 26 , 26 , null);*/
+        g.drawImage(picture , x, y , 26 , 26 , null);
     }
 
     @Override
     public String getName() {
-        /*return "CharlieQBot";*/
-        return "";
+        return "Charlie";
     }
 
     @Override
@@ -386,12 +533,12 @@ public class CharlieQBot extends Bot{
 
     @Override
     public void incomingMessage(int botNum, String msg) {
-        
+
     }
 
     @Override
     public String[] imageNames() {
-        String[] images = {"starfish4.png"};
+        String[] images = { "tank.png" };
         return images;
     }
 
@@ -399,5 +546,5 @@ public class CharlieQBot extends Bot{
     public void loadedImages(Image[] images) {
         picture = images[0];
     }
-    
+
 }
