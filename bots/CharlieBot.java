@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import arena.*;
 import java.util.Random;
 
-public class CharlieQBot extends Bot {
+public class CharlieBot extends Bot {
     Image picture;
     private int shootDelay = 0;
 
