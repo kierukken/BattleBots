@@ -81,7 +81,7 @@ public class CharlieQBot extends Bot {
                 }
             }
             if (distance > Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2))) {
-                if (bot.getName().equals("Charlie") && liveBots.length > 1) continue;
+                if (bot.getName().equals("Albert") && liveBots.length > 1) continue;
                 distance = Math.sqrt(Math.pow(botX - myX, 2) + Math.pow(botY - myY, 2));
                 closestBot = bot;
                 closestBotLastMove = bot.getLastMove();
@@ -305,69 +305,15 @@ public class CharlieQBot extends Bot {
                 }
             }
         }
-        /* overheated bot */
-        if (Math.sqrt(Math.pow(closestBot.getX()+Bot.RADIUS- myX, 2) + Math.pow(closestBot.getY()+Bot.RADIUS - myY, 2)) < 50)
-        if (closestOverheated != null) {
-            double overheatedX = closestOverheated.getX() + Bot.RADIUS;
-            double overheatedY = closestOverheated.getY() + Bot.RADIUS;
-            if (overheatedY > myY - 13 && overheatedY < myY + 13) {
-                boolean blocked = false;
-                for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, overheatedX, deadBot.getX() + Bot.RADIUS,
-                            deadBot.getY() + Bot.RADIUS, true)) {
-                        blocked = true;
-                        break;
-                    }
-                }
-                if (!blocked && shotOK && shootDelay <= 0) {
-                    return shoot(overheatedX < myX ? 1 : 3);
-                }
-            } else if (overheatedX > myX - 13 && overheatedX < myX + 13) {
-                boolean blocked = false;
-                for (BotInfo deadBot : deadBots) {
-                    if (deadBotInBetween(myX, myY, overheatedY, deadBot.getX() + Bot.RADIUS,
-                            deadBot.getY() + Bot.RADIUS, false)) {
-                        blocked = true;
-                        break;
-                    }
-                }
-                if (!blocked && shotOK && shootDelay <= 0) {
-                    return shoot(overheatedY < myY ? 2 : 0);
-                }
-            }
-            double xDist = Math.abs(overheatedX - myX);
-            double yDist = Math.abs(overheatedY - myY);
-            if (xDist <= yDist) {
-                if (myX < overheatedX && canMoveRight) {
-                    return BattleBotArena.RIGHT;
-                } else if (myX > overheatedX && canMoveLeft) {
-                    return BattleBotArena.LEFT;
-                } else if (myY < overheatedY && canMoveDown) {
-                    return BattleBotArena.DOWN;
-                } else if (myY > overheatedY && canMoveUp) {
-                    return BattleBotArena.UP;
-                }
-            } else {
-                if (myY < overheatedY && canMoveDown) {
-                    return BattleBotArena.DOWN;
-                } else if (myY > overheatedY && canMoveUp) {
-                    return BattleBotArena.UP;
-                } else if (myX < overheatedX && canMoveRight) {
-                    return BattleBotArena.RIGHT;
-                } else if (myX > overheatedX && canMoveLeft) {
-                    return BattleBotArena.LEFT;
-                }
-            }
-        }
-        /*Move to target bot */
-        if (closestBot != null && me.getBulletsLeft() > 0) {
-            double closestBotX = closestBot.getX() + Bot.RADIUS;
-            double closestBotY = closestBot.getY() + Bot.RADIUS;
+        /*Pick up bullet */
+        if (closestDeadBot != null&& me.getBulletsLeft() == 0) {
+            double closestBotX = closestDeadBot.getX() + Bot.RADIUS;
+            double closestBotY = closestDeadBot.getY() + Bot.RADIUS;
             if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY)){
-                closestBotX = closestBotX >= 500 ? closestBotX-40:closestBotX+40;
+                closestBotX = closestBotX >= 500 ? closestBotX-13:closestBotX+13;
             }
             else{
-                closestBotY = closestBotY >= 350 ? closestBotY-40:closestBotY+40; 
+                closestBotY = closestBotY >= 350 ? closestBotY-13:closestBotY+13; 
             }
         
             if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY-myY)) {
@@ -395,17 +341,102 @@ public class CharlieQBot extends Bot {
                 }
             }
         }
-        /*Pick up bullet */
-        if (closestDeadBot != null&& me.getBulletsLeft() == 0) {
-            double closestBotX = closestDeadBot.getX() + Bot.RADIUS;
-            double closestBotY = closestDeadBot.getY() + Bot.RADIUS;
+        /* move away from close bots*/
+        if ((closestBot != null && distance < 38) || (closestDeadBot != null && closestDeadDistance < 38)) {
+            BotInfo nearBot;
+            double nearBotX, nearBotY;
+            
+            if (closestBot != null && distance < 38) {
+                nearBot = closestBot;
+                nearBotX = nearBot.getX() + Bot.RADIUS;
+                nearBotY = nearBot.getY() + Bot.RADIUS;
+            } else {
+                nearBot = closestDeadBot;
+                nearBotX = nearBot.getX() + Bot.RADIUS;
+                nearBotY = nearBot.getY() + Bot.RADIUS;
+            }
+            
+            // Move AWAY from the bot, not toward it
+            if (nearBotX > myX && canMoveLeft) return BattleBotArena.LEFT;
+            if (nearBotX < myX && canMoveRight) return BattleBotArena.RIGHT;
+            if (nearBotY > myY && canMoveUp) return BattleBotArena.UP;
+            if (nearBotY < myY && canMoveDown) return BattleBotArena.DOWN;
+        }
+        /* overheated bot */
+        if (distance < 50){
+            if (closestOverheated != null) {
+                double overheatedX = closestOverheated.getX() + Bot.RADIUS;
+                double overheatedY = closestOverheated.getY() + Bot.RADIUS;
+                if (overheatedY > myY - 13 && overheatedY < myY + 13) {
+                    boolean blocked = false;
+                    for (BotInfo deadBot : deadBots) {
+                        if (deadBotInBetween(myX, myY, overheatedX, deadBot.getX() + Bot.RADIUS,
+                                deadBot.getY() + Bot.RADIUS, true)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (!blocked && shotOK && shootDelay <= 0) {
+                        return shoot(overheatedX < myX ? 1 : 3);
+                    }
+                } else if (overheatedX > myX - 13 && overheatedX < myX + 13) {
+                    boolean blocked = false;
+                    for (BotInfo deadBot : deadBots) {
+                        if (deadBotInBetween(myX, myY, overheatedY, deadBot.getX() + Bot.RADIUS,
+                                deadBot.getY() + Bot.RADIUS, false)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (!blocked && shotOK && shootDelay <= 0) {
+                        return shoot(overheatedY < myY ? 2 : 0);
+                    }
+                }
+                double xDist = Math.abs(overheatedX - myX);
+                double yDist = Math.abs(overheatedY - myY);
+                if (xDist <= yDist) {
+                    if (myX < overheatedX && canMoveRight) {
+                        return BattleBotArena.RIGHT;
+                    } else if (myX > overheatedX && canMoveLeft) {
+                        return BattleBotArena.LEFT;
+                    } else if (myY < overheatedY && canMoveDown) {
+                        return BattleBotArena.DOWN;
+                    } else if (myY > overheatedY && canMoveUp) {
+                        return BattleBotArena.UP;
+                    }
+                } else {
+                    if (myY < overheatedY && canMoveDown) {
+                        return BattleBotArena.DOWN;
+                    } else if (myY > overheatedY && canMoveUp) {
+                        return BattleBotArena.UP;
+                    } else if (myX < overheatedX && canMoveRight) {
+                        return BattleBotArena.RIGHT;
+                    } else if (myX > overheatedX && canMoveLeft) {
+                        return BattleBotArena.LEFT;
+                    }
+                }
+            }
+        }
+        /*Move to target bot */
+        if (closestBot != null) {
+            double closestBotX = closestBot.getX() + Bot.RADIUS;
+            double closestBotY = closestBot.getY() + Bot.RADIUS;
             if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY)){
-                closestBotX = closestBotX >= 500 ? closestBotX-13:closestBotX+13;
+                closestBotX = closestBotX >= 500 ? closestBotX-40:closestBotX+40;
             }
             else{
-                closestBotY = closestBotY >= 350 ? closestBotY-13:closestBotY+13; 
+                closestBotY = closestBotY >= 350 ? closestBotY-40:closestBotY+40; 
             }
-        
+            /*
+            for (BotInfo bot: deadBots){
+                double deadBotX = bot.getX() + Bot.RADIUS;
+                double deadBotY = bot.getY() + Bot.RADIUS;
+                if (Math.abs(deadBotX-closestBotX) <= 18 && Math.abs(deadBotY-closestBotY) <= 18){
+                    closestBotX = closestBotX >= 500 ? closestBotX-26:closestBotX+26;
+                    closestBotY = closestBotY >= 350 ? closestBotY-26:closestBotY+26; 
+                }
+            }
+            */
             if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY-myY)) {
                 if (closestBotX > myX) {
                     if (canMoveRight) {
