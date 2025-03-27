@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import arena.*;
 import java.util.Random;
 
-public class CharlieBot extends Bot {
+public class CharlieQBot extends Bot {
     Image picture;
     private int shootDelay = 0;
 
@@ -168,9 +168,9 @@ public class CharlieBot extends Bot {
                         /* emergency shooting code */
                         if (shotOK && Math.abs(bulletY - myY) / 3 > Math.abs(bulletX - myX) / 6) {
                             if (xSpeed < 0)
-                                if (shootDelay <= 0)
+                                if (shootDelay <= 3)
                                     return shoot(3);
-                                else if (shootDelay <= 0)
+                                else if (shootDelay <= 3)
                                     return shoot(1);
                         }
                         boolean bulletBlocked = false;
@@ -218,9 +218,9 @@ public class CharlieBot extends Bot {
                         /* emergency shooting code */
                         if (shotOK && Math.abs(bulletX - myX) / 3 > Math.abs(bulletY - myY) / 6) {
                             if (ySpeed < 0)
-                                if (shootDelay <= 0)
+                                if (shootDelay <= 3)
                                     return shoot(0);
-                                else if (shootDelay <= 0)
+                                else if (shootDelay <= 3)
                                     return shoot(2);
                         }
                         boolean bulletBlocked = false;
