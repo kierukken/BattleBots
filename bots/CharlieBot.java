@@ -341,12 +341,12 @@ public class CharlieQBot extends Bot {
                 }
             }
         }
-        /* move away from close bots*/
-        if ((closestBot != null && distance < 38) || (closestDeadBot != null && closestDeadDistance < 38)) {
+        /* move away from close bots*
+        if ((closestBot != null && distance < 34) || (closestDeadBot != null && closestDeadDistance < 40)) {
             BotInfo nearBot;
             double nearBotX, nearBotY;
             
-            if (closestBot != null && distance < 38) {
+            if (closestBot != null && distance < 35) {
                 nearBot = closestBot;
                 nearBotX = nearBot.getX() + Bot.RADIUS;
                 nearBotY = nearBot.getY() + Bot.RADIUS;
@@ -363,7 +363,7 @@ public class CharlieQBot extends Bot {
             if (nearBotY < myY && canMoveDown) return BattleBotArena.DOWN;
         }
         /* overheated bot */
-        if (distance < 50){
+        if (distance < 80){
             if (closestOverheated != null) {
                 double overheatedX = closestOverheated.getX() + Bot.RADIUS;
                 double overheatedY = closestOverheated.getY() + Bot.RADIUS;
@@ -427,37 +427,59 @@ public class CharlieQBot extends Bot {
             else{
                 closestBotY = closestBotY >= 350 ? closestBotY-40:closestBotY+40; 
             }
-            /*
-            for (BotInfo bot: deadBots){
-                double deadBotX = bot.getX() + Bot.RADIUS;
-                double deadBotY = bot.getY() + Bot.RADIUS;
-                if (Math.abs(deadBotX-closestBotX) <= 18 && Math.abs(deadBotY-closestBotY) <= 18){
-                    closestBotX = closestBotX >= 500 ? closestBotX-26:closestBotX+26;
-                    closestBotY = closestBotY >= 350 ? closestBotY-26:closestBotY+26; 
-                }
-            }
-            */
             if (Math.abs(closestBotX-myX) >= Math.abs(closestBotY-myY)) {
-                if (closestBotX > myX) {
-                    if (canMoveRight) {
-                        return BattleBotArena.RIGHT;
+                if (closestDeadBot != null) {
+                    if (!(closestDeadBot.getY() > myY -13 && closestDeadBot.getY() < myY + 13 && Math.abs(closestDeadBot.getX() - myX+13) < 39)) {
+                        if (closestBotX > myX) {
+                            if (canMoveRight) {
+                                return BattleBotArena.RIGHT;
+                            }
+                        } 
+                        else {
+                            if (canMoveLeft) {
+                                return BattleBotArena.LEFT;
+                            }
+                        }
                     }
-                } 
-                else {
-                    if (canMoveLeft) {
-                        return BattleBotArena.LEFT;
+                }
+                else{
+                    if (closestBotX > myX) {
+                        if (canMoveRight) {
+                            return BattleBotArena.RIGHT;
+                        }
+                    } 
+                    else {
+                        if (canMoveLeft) {
+                            return BattleBotArena.LEFT;
+                        }
                     }
                 }
             }
             else {
-                if (closestBotY > myY) {
-                    if (canMoveDown) {
-                        return BattleBotArena.DOWN;
+                if (closestDeadBot != null) {
+                    if (!(closestDeadBot.getX() > myX -13 && closestDeadBot.getX() < myX + 13 && Math.abs(closestDeadBot.getY() - myY+13) < 39)) {
+                        if (closestBotY > myY) {
+                            if (canMoveDown) {
+                                return BattleBotArena.DOWN;
+                            }
+                        } 
+                        else {
+                            if (canMoveUp) {
+                                return BattleBotArena.UP;
+                            }
+                        }
                     }
-                } 
-                else {
-                    if (canMoveUp) {
-                        return BattleBotArena.UP;
+                }
+                else{
+                    if (closestBotY > myY) {
+                        if (canMoveDown) {
+                            return BattleBotArena.DOWN;
+                        }
+                    } 
+                    else {
+                        if (canMoveUp) {
+                            return BattleBotArena.UP;
+                        }
                     }
                 }
             }
